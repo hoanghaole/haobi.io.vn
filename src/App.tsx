@@ -14,7 +14,7 @@ function App() {
         <Route path="/hmsxanh" element={<HmsLandingPage />} />
         <Route path="/eco" element={<EcoHubPage />} />
         <Route path="/blog" element={<BlogHomePage />} />
-        <Route path="/article" element={<ArticleDetail />} />
+        <Route path="/blog/:slug" element={<ArticleDetail />} />
       </Routes>
     </BrowserRouter>
   );

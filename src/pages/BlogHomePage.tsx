@@ -1,6 +1,36 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
 
 export default function BlogHomePage() {
+  const [posts, setPosts] = useState<any[]>([]);
+  const [featuredPost, setFeaturedPost] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchPosts() {
+      try {
+        const { data, error } = await supabase
+          .from('websiteblog')
+          .select('*')
+          .order('date', { ascending: false });
+
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+          // Assume the first one is the featured post
+          setFeaturedPost(data[0]);
+          setPosts(data.slice(1));
+        }
+      } catch (err) {
+        console.error("Error fetching blog posts", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchPosts();
+  }, []);
+
   return (
     <div className="bg-blog-bg-light text-blog-text-main flex min-h-screen flex-col overflow-x-hidden antialiased selection:bg-blog-primary/20 selection:text-blog-primary" style={{ fontFamily: "'Noto Sans', sans-serif" }}>
       
@@ -96,29 +126,35 @@ export default function BlogHomePage() {
 <span className="material-symbols-outlined text-sm">star</span>
 <span className="text-xs font-bold uppercase tracking-wider">Featured Story</span>
 </div>
-<div className="group relative overflow-hidden rounded-2xl bg-white shadow-sm transition-all hover:shadow-md grid md:grid-cols-2">
-<div className="relative h-64 md:h-auto overflow-hidden">
-<div className="absolute inset-0 bg-blog-primary/10 mix-blend-multiply"></div>
-<img alt="Modern workspace with natural light" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Minimalist desk with laptop and plant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9YOm2N4YcXNWxoG33T_wpV53GB9Pvn69Zn8wx1goJ-g0lAZV6ftkWl2NU0A5EnkeQQo69zmpbHjF84JWM5SzVZxJUw8ydN8PFKtu55aochkNVOG5_vo22OTiHi3_6qiaVnr05CUc9C1jrehUFO0SVKWzt256c82TWeb_FfZHxICJhly3tzuNMH9m1mwEKdIedPbnfRTU4AUKOguVSSnJUHvR5K5PuY0cJl4ejelp-I3AfaE_XyoVL74f7A9NIy67AdVUtSG6Jg7A"/>
-</div>
-<div className="flex flex-col justify-center p-8 md:p-12">
-<div className="mb-4 flex items-center gap-3 text-xs font-medium text-blog-text-muted">
-<span className="rounded-full bg-blog-primary/10 px-2 py-1 text-blog-primary">Eastern Wisdom</span>
-<span>•</span>
-<span>Oct 12, 2023</span>
-</div>
-<h2 className="mb-4 text-3xl font-bold leading-tight text-blog-text-main md:text-4xl">
-                                The Tao of Data: Finding Balance in Chaos
-                            </h2>
-<p className="mb-8 text-blog-text-muted leading-relaxed">
-                                In a world obsessed with big data, sometimes the most profound insights come from the spaces between the numbers. How ancient principles can guide modern analytics strategy.
-                            </p>
-<a className="inline-flex w-fit items-center gap-2 font-bold text-blog-primary hover:text-blog-primary-light hover:gap-3 transition-all" href="#">
-                                Read the full story 
-                                <span className="material-symbols-outlined text-sm">arrow_forward</span>
-</a>
-</div>
-</div>
+{loading ? (
+  <div className="text-center py-10">Đang tải bài viết...</div>
+) : featuredPost ? (
+  <div className="group relative overflow-hidden rounded-2xl bg-white shadow-sm transition-all hover:shadow-md grid md:grid-cols-2">
+    <div className="relative h-64 md:h-auto overflow-hidden">
+      <div className="absolute inset-0 bg-blog-primary/10 mix-blend-multiply"></div>
+      <img alt={featuredPost.title} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" src={featuredPost.image_hero || featuredPost.image || "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=2070"}/>
+    </div>
+    <div className="flex flex-col justify-center p-8 md:p-12">
+      <div className="mb-4 flex items-center gap-3 text-xs font-medium text-blog-text-muted">
+        <span className="rounded-full bg-blog-primary/10 px-2 py-1 text-blog-primary">{featuredPost.category || "General"}</span>
+        <span>•</span>
+        <span>{featuredPost.date || "Today"}</span>
+      </div>
+      <h2 className="mb-4 text-3xl font-bold leading-tight text-blog-text-main md:text-4xl">
+        {featuredPost.title}
+      </h2>
+      <p className="mb-8 text-blog-text-muted leading-relaxed line-clamp-3">
+        {featuredPost.summary || featuredPost.content}
+      </p>
+      <Link className="inline-flex w-fit items-center gap-2 font-bold text-blog-primary hover:text-blog-primary-light hover:gap-3 transition-all" to={`/blog/${featuredPost.slug}`}>
+        Đọc câu chuyện đầy đủ 
+        <span className="material-symbols-outlined text-sm">arrow_forward</span>
+      </Link>
+    </div>
+  </div>
+) : (
+  <div className="text-center py-10 text-blog-text-muted">Không có bài viết nổi bật.</div>
+)}
 </div>
 </section>
 {/*  Recent Posts Grid  */}
@@ -129,102 +165,31 @@ export default function BlogHomePage() {
 <a className="text-sm font-medium text-blog-primary hover:underline" href="#">View Archive</a>
 </div>
 <div className="grid gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
-{/*  Post 1  */}
-<article className="group flex flex-col gap-4">
-<div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-blog-surface-light">
-<img alt="Data visualization dashboard screen" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Abstract data charts on screen" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-mfTNlXi35UNc53skRsjiAovLCy0yLVLYp54ORkLB8-RXgs7QeFcc4ICsb6X3ysrLph6540iMgtNXKpRl_DwWhqL708O8cNobCufoAOzJqkS8qY_vTvr7QrIYNVU7J6tOrPhxUYq_6JCIZHuAxDoZqnkwgtIo7tmUyfKTgKf7HquDRJY_od0Jqkc9k1a1wgnCu1XGch0vLsLL4AEGddKKpLRM7OLJJdilBsq5Sn5rAH2WplnQnkZVctB-t2605fCMln9pGXqdGkA"/>
-</div>
-<div className="flex flex-col gap-2">
-<span className="text-xs font-bold uppercase tracking-wider text-blog-primary">Data &amp; Strategy</span>
-<h4 className="text-xl font-bold leading-snug text-blog-text-main group-hover:text-blog-primary transition-colors">
-                                    Predictive Modeling for the Impatient Soul
-                                </h4>
-<p className="text-sm text-blog-text-muted line-clamp-2">
-                                    Why rushing the training phase almost always leads to overfitting, and life lessons on patience.
-                                </p>
-<span className="text-xs text-blog-text-muted mt-2">Sep 28, 2023 • 5 min read</span>
-</div>
-</article>
-{/*  Post 2  */}
-<article className="group flex flex-col gap-4">
-<div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-blog-surface-light">
-<img alt="Raindrops on a window pane" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Rain falling on glass window" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzLhHsYhG3NzTaUvBty-VBwxs8XoakwdcDsOraIc2cKE4MYVEYQQoWhum0joUHqMF8jL0OlBw6u10t_v_-fvwO8Rsdz-ZdTgOiTLBZCFJZR5sIJS0LvN9CxVRiafJB4lJGMvqrxit4L8Wzyx_6uKWE5fPYN8805cJOIL7aNl7p_V98tKnWBi7EkW5Rl3inluCcZiN7FDYaBn0LCWJmnsFwoW32mCQ6dZHlR9UdmCA9pO-bGePuqsChoyuyx9kzs5Va4OVt8QFC2iM"/>
-</div>
-<div className="flex flex-col gap-2">
-<span className="text-xs font-bold uppercase tracking-wider text-blog-primary">Life &amp; Reflections</span>
-<h4 className="text-xl font-bold leading-snug text-blog-text-main group-hover:text-blog-primary transition-colors">
-                                    Quiet Mornings and Noisy datasets
-                                </h4>
-<p className="text-sm text-blog-text-muted line-clamp-2">
-                                    Finding your center when the Slack notifications won't stop pinging.
-                                </p>
-<span className="text-xs text-blog-text-muted mt-2">Sep 24, 2023 • 3 min read</span>
-</div>
-</article>
-{/*  Post 3  */}
-<article className="group flex flex-col gap-4">
-<div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-blog-surface-light">
-<img alt="Traditional tea ceremony setup" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Ceramic tea pot and cups" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPMK_rFhX0GlSGZoyAuKei13Ex2ZAbhTMmY6ZvFaZ8tCoeYfX663e_n-HucF7L6YbIdVDgvv9lpv1vH6UopZBoaSGXVWnlLAE52Gu7FpS-KMHvyMPACt8W-5LTnpVcw2OiXkbUH7M1IBUDOF4uUobHiHNecxhetf3tekl5X3I3KGGogKeF59yPf4kxCApWANp7_Cm2mkg5sshBFhiCStn_JQAforwZUqXqxT2wzhLOsDn4KXLZ4KzI2sXH7HPum37N5x_1H4ccW0A"/>
-</div>
-<div className="flex flex-col gap-2">
-<span className="text-xs font-bold uppercase tracking-wider text-blog-primary">Eastern Wisdom</span>
-<h4 className="text-xl font-bold leading-snug text-blog-text-main group-hover:text-blog-primary transition-colors">
-                                    Wu Wei in Workflow Automation
-                                </h4>
-<p className="text-sm text-blog-text-muted line-clamp-2">
-                                    The art of 'effortless action' applied to Python scripts and cron jobs.
-                                </p>
-<span className="text-xs text-blog-text-muted mt-2">Sep 15, 2023 • 7 min read</span>
-</div>
-</article>
-{/*  Post 4  */}
-<article className="group flex flex-col gap-4">
-<div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-blog-surface-light">
-<img alt="Open notebook with pen" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Journal with handwritten notes" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1a6iClwkASnoiDx1PhWeWlwmSldKKHscSl1scA_QmV-cKl6iy6KmcAgeVR8OccahgwrqhCMiluvgfI1dAUSqDsicFXIwo_eEmwn0RVAADdsAceIZnR22pjFtdkx5ARABxc7VUbk7eBh5v_FRpHJRbBaRybtkDAK3fuulZeZJcuHCLEvpq6qqEeSij9fUkt64OM5kw8nI4_2tEs07mxiI3-q5xdncjQ6TusRbknOZAWGkMCzZ1oUGWizc-yMiUA_bQqlQeolma9pI"/>
-</div>
-<div className="flex flex-col gap-2">
-<span className="text-xs font-bold uppercase tracking-wider text-blog-primary">Life &amp; Reflections</span>
-<h4 className="text-xl font-bold leading-snug text-blog-text-main group-hover:text-blog-primary transition-colors">
-                                    The Annual Review: Not Just for KPIs
-                                </h4>
-<p className="text-sm text-blog-text-muted line-clamp-2">
-                                    Using data visualization techniques to understand my personal growth over the last year.
-                                </p>
-<span className="text-xs text-blog-text-muted mt-2">Aug 30, 2023 • 10 min read</span>
-</div>
-</article>
-{/*  Post 5  */}
-<article className="group flex flex-col gap-4">
-<div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-blog-surface-light">
-<img alt="Computer code on screen" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Close up of code editor" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjFLMPjQDhM6Jul8Vryf_yGhcILb2VpgMPKzYq2N4f3wjoenZeDX19HA0Hc52N--WNKEf1FEjLh0FWBUnei8riuQCYRjQWVo4ZjEZdWxgG3HBkei0qRiTqiMaQeuYdRHBmetNeWWOomq6ovwSr_LBhYn-YCw0r5YzumL626zi_XrP_2ekhL52n9NSLuEu0oKOTPwEj0JW1U3O2KT8zPnRAz-pEsO3xoEDHXzGEN2DGh0Q-o1TOmmsGETY_1dXHBu3kOimmBkpK6cs"/>
-</div>
-<div className="flex flex-col gap-2">
-<span className="text-xs font-bold uppercase tracking-wider text-blog-primary">Data &amp; Strategy</span>
-<h4 className="text-xl font-bold leading-snug text-blog-text-main group-hover:text-blog-primary transition-colors">
-                                    SQL vs. NoSQL: A Philosophical Debate
-                                </h4>
-<p className="text-sm text-blog-text-muted line-clamp-2">
-                                    Structure versus flexibility. Is one inherently better, or does it depend on the nature of reality?
-                                </p>
-<span className="text-xs text-blog-text-muted mt-2">Aug 22, 2023 • 6 min read</span>
-</div>
-</article>
-{/*  Post 6  */}
-<article className="group flex flex-col gap-4">
-<div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-blog-surface-light">
-<img alt="Zen garden raked sand" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Raked sand patterns in zen garden" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXHoqHigV1M2Ktyhz9VUtfRkQ4JxYQkyWNznIaDGqqqASoKR_LUW-KLJXouivJmHK0qjPgV3CAkg5vtaL_PhIvdl8p9OFQ-woR9LuiOH7VUSsUrjFg8oqOS65DY2v7qveVilm8J7yPTZq2IAUEm-1qf60RIjTYrwPwDu2g2hSvQwQkAE0mNju14Nq3UoBvWgjwD1FAHpG2YEOf73Db3KkDfDZf-3THx9yYjatGdgvHE60x7SJf41gO3eKBd89eah6xxX15kWiOHak"/>
-</div>
-<div className="flex flex-col gap-2">
-<span className="text-xs font-bold uppercase tracking-wider text-blog-primary">Eastern Wisdom</span>
-<h4 className="text-xl font-bold leading-snug text-blog-text-main group-hover:text-blog-primary transition-colors">
-                                    Empty Your Cup (Cache)
-                                </h4>
-<p className="text-sm text-blog-text-muted line-clamp-2">
-                                    Why clearing your mental and digital cache is essential for new learning.
-                                </p>
-<span className="text-xs text-blog-text-muted mt-2">Aug 14, 2023 • 4 min read</span>
-</div>
-</article>
+  {loading ? (
+    <div className="col-span-1 md:col-span-2 lg:col-span-3 text-center py-10">Đang tải các bài viết...</div>
+  ) : posts.length > 0 ? (
+    posts.map((post) => (
+      <article key={post.id} className="group flex flex-col gap-4">
+        <Link to={`/blog/${post.slug}`} className="relative aspect-[4/3] overflow-hidden rounded-xl bg-blog-surface-light block">
+          <img alt={post.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" src={post.image_poster || post.image || "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=2070"}/>
+        </Link>
+        <div className="flex flex-col gap-2">
+          <span className="text-xs font-bold uppercase tracking-wider text-blog-primary">{post.category || "General"}</span>
+          <Link to={`/blog/${post.slug}`}>
+            <h4 className="text-xl font-bold leading-snug text-blog-text-main group-hover:text-blog-primary transition-colors line-clamp-2">
+              {post.title}
+            </h4>
+          </Link>
+          <p className="text-sm text-blog-text-muted line-clamp-2">
+            {post.summary || post.content}
+          </p>
+          <span className="text-xs text-blog-text-muted mt-2">{post.date || "Today"} • {(Math.max(1, Math.floor((post.content?.length || 0)/1000))) + " phút đọc"}</span>
+        </div>
+      </article>
+    ))
+  ) : (
+    <div className="col-span-1 md:col-span-2 lg:col-span-3 text-center py-10 text-blog-text-muted">Chưa có bài viết nào.</div>
+  )}
 </div>
 </div>
 </section>

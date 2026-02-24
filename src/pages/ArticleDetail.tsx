@@ -1,6 +1,60 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
 
 export default function ArticleDetail() {
+  const { slug } = useParams();
+  const navigate = useNavigate();
+  const [article, setArticle] = useState<any>(null);
+  const [related, setRelated] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchArticle() {
+      if (!slug) return;
+      try {
+        const { data, error } = await supabase
+          .from('websiteblog')
+          .select('*')
+          .eq('slug', slug)
+          .single();
+
+        if (error) throw error;
+        
+        if (data) {
+          setArticle(data);
+          
+          // Fetch related articles
+          const { data: relatedData } = await supabase
+            .from('websiteblog')
+            .select('*')
+            .neq('id', data.id)
+            .limit(3);
+            
+          if (relatedData) setRelated(relatedData);
+        } else {
+          navigate('/blog');
+        }
+      } catch (err) {
+        console.error("Error fetching article", err);
+        navigate('/blog');
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchArticle();
+  }, [slug, navigate]);
+
+  if (loading) {
+    return (
+      <div className="bg-article-bg-light min-h-screen flex items-center justify-center font-display text-2xl">
+        Đang tải nội dung...
+      </div>
+    );
+  }
+
+  if (!article) return null;
+
   return (
     <div className="bg-article-bg-light text-[#111812] font-display antialiased flex flex-col min-h-screen" style={{ fontFamily: "'Noto Serif', serif" }}>
       <style>{`
@@ -40,105 +94,45 @@ export default function ArticleDetail() {
 <main className="flex-1 w-full max-w-4xl mx-auto px-6 py-10 md:py-16">
 {/*  Breadcrumbs  */}
 <nav className="flex flex-wrap items-center gap-2 mb-8 text-sm font-sans">
-<a className="text-gray-500 hover:text-article-primary transition-colors" href="#">Home</a>
-<span className="text-gray-400">/</span>
-<a className="text-gray-500 hover:text-article-primary transition-colors" href="#">Blog</a>
-<span className="text-gray-400">/</span>
-<span className="text-gray-800 dark:text-gray-200 font-medium">Data &amp; Wisdom</span>
+    <Link className="text-gray-500 hover:text-article-primary transition-colors" to="/">Trang chủ</Link>
+    <span className="text-gray-400">/</span>
+    <Link className="text-gray-500 hover:text-article-primary transition-colors" to="/blog">Blog</Link>
+    <span className="text-gray-400">/</span>
+    <span className="text-gray-800 dark:text-gray-200 font-medium">{article?.category || "Tản mạn"}</span>
 </nav>
 {/*  Article Header  */}
 <header className="mb-10 text-center md:text-left">
-<h1 className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight tracking-tight text-[#111812] dark:text-white mb-6">
-                The Intersection of Big Data and Ancient Bazi Wisdom
-            </h1>
-<div className="flex items-center justify-center md:justify-start gap-4 text-gray-600 dark:text-gray-400 font-sans text-sm md:text-base">
-<div className="flex items-center gap-2">
-<div className="size-8 rounded-full bg-gray-200 overflow-hidden relative">
-<img className="w-full h-full object-cover" data-alt="Portrait of the author Haobi smiling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtTYvHs3Ijn4jMujV6JGhguKmdrK2vwDzAu56SkyCWANP925bUpj2g0B6LkYuMoq8cM5OU59u7gispMCMhXITrk37A00X-kfpbHviya653byd2UZuvVWoH4Qk8FwkJFrCjW3jV8eVAtQ0PYdbxjpoQdWihgbgQvclOE5OPpKVzWgij5m2zhkbrE5QoYzM1_fav-Ym0CQRd5Yv3HCOxvoOsbVRfdK6RTykCvOQ83Igiw1nnj6seYGIS6ZqLqmF5ZBkGPhNu3OErawc"/>
-</div>
-<span className="font-bold text-[#111812] dark:text-gray-200">By Haobi</span>
-</div>
-<span>•</span>
-<time datetime="2023-10-24">Oct 24, 2023</time>
-<span>•</span>
-<span>8 min read</span>
-</div>
+    <h1 className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight tracking-tight text-[#111812] dark:text-white mb-6">
+      {article?.title}
+    </h1>
+    <div className="flex items-center justify-center md:justify-start gap-4 text-gray-600 dark:text-gray-400 font-sans text-sm md:text-base">
+      <div className="flex items-center gap-2">
+        <div className="size-8 rounded-full bg-gray-200 overflow-hidden relative">
+          <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtTYvHs3Ijn4jMujV6JGhguKmdrK2vwDzAu56SkyCWANP925bUpj2g0B6LkYuMoq8cM5OU59u7gispMCMhXITrk37A00X-kfpbHviya653byd2UZuvVWoH4Qk8FwkJFrCjW3jV8eVAtQ0PYdbxjpoQdWihgbgQvclOE5OPpKVzWgij5m2zhkbrE5QoYzM1_fav-Ym0CQRd5Yv3HCOxvoOsbVRfdK6RTykCvOQ83Igiw1nnj6seYGIS6ZqLqmF5ZBkGPhNu3OErawc"/>
+        </div>
+        <span className="font-bold text-[#111812] dark:text-gray-200">Bởi Haobi</span>
+      </div>
+      <span>•</span>
+      <time>{article?.date || "Hôm nay"}</time>
+      <span>•</span>
+      <span>{Math.max(1, Math.floor((article?.content?.length || 0)/1000))} phút đọc</span>
+    </div>
 </header>
 {/*  Featured Image  */}
-<figure className="mb-12 rounded-xl overflow-hidden shadow-sm">
-<img alt="Abstract digital connections resembling constellations in night sky" className="w-full h-auto aspect-video object-cover" data-alt="Abstract digital connections resembling constellations in night sky" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRNtBDfOOXXMIb5XgZJ2eKjU4fJuawE1uM4XygzgQ7IehCUp0w5H960r_Y9ayX6KcteFnJulelw7rGmbx6uBHNSRT0ccoOkVGszUYrbOWQfLae5p1M8NCSq4-o74sbJjQnNPPCGaQKdFwNSyOLIcCjxO_pa0_oRMzcIW3NIo_cw1l2EBQdTWFdd_-xfaktYrNTfpuiJoTZcXHtDnODWrq8uOrC1HqvbCk0jKEfFZp1eG_N9ReokL04B9SIONyTiLW6Z8X3T8pgGMo"/>
-<figcaption className="mt-3 text-center text-sm text-gray-500 italic font-sans">
-                Mapping the constellations of data points in our modern lives.
-            </figcaption>
-</figure>
+{(article?.image || article?.image_hero || article?.image_content) && (
+    <figure className="mb-12 rounded-xl overflow-hidden shadow-sm">
+      <img alt={article?.title} className="w-full h-auto max-h-[60vh] object-cover" src={article?.image || article?.image_hero || article?.image_content} />
+    </figure>
+  )}
 {/*  Content Body  */}
 <article className="prose prose-lg prose-headings:font-display prose-p:font-display prose-li:font-display max-w-none text-[#111812]/90 dark:text-gray-300">
-<p className="text-xl leading-relaxed mb-6 font-serif">
-                In the modern world, we often look to numbers for answers. We track metrics, analyze trends, and build predictive models. We are obsessed with the "what" and the "how much." Yet, ancient wisdom offers a different kind of predictive power—one that focuses on the "when" and the "why."
-            </p>
-<p className="mb-8 leading-relaxed">
-                Big Data gives us the granular details of human behavior, aggregating billions of signals to forecast consumer trends or economic shifts. Bazi (Eight Characters), a system of Chinese astrology, looks at the energy imprint of time itself to forecast individual and collective cycles. Surprisingly, when we layer these two distinct disciplines, a fascinating harmony emerges.
-            </p>
-<h2 className="text-3xl font-bold mt-12 mb-6 text-[#111812] dark:text-white">Patterns in the Chaos</h2>
-<p className="mb-8 leading-relaxed">
-                Just as a data scientist cleans a dataset to find the signal in the noise, a Bazi master analyzes the elemental balance of a chart. Both are systems of pattern recognition. The algorithm looks for correlation; the sage looks for balance.
-            </p>
-{/*  Blockquote  */}
-<div className="my-12 pl-6 md:pl-10 border-l-4 border-article-primary/50 py-2">
-<blockquote className="text-2xl md:text-3xl italic font-serif text-[#111812] dark:text-white leading-normal">
-                    "Data tells us what is happening; wisdom tells us why it matters. Without the 'why', prediction is merely observation without insight."
-                </blockquote>
-</div>
-<p className="mb-8 leading-relaxed">
-                Recent analysis of market volatility aligns eerily well with the Water-Fire clashes predicted in the yearly Bazi charts. While correlation does not imply causation, the synchronization suggests that our modern "random" data might be flowing through ancient, predictable channels.
-            </p>
-{/*  Data Chart Placeholder  */}
-<div className="my-12 p-8 bg-white dark:bg-[#1a2c1d] rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm">
-<h3 className="text-lg font-bold mb-6 font-sans text-gray-900 dark:text-gray-100">Cyclical Trends: Bazi Elements vs. Market Volatility</h3>
-<div className="flex items-end gap-4 h-64 w-full">
-{/*  Chart Bars  */}
-<div className="flex-1 bg-article-primary/20 rounded-t-sm relative group h-[40%]">
-<div className="absolute -top-8 w-full text-center text-xs font-sans opacity-0 group-hover:opacity-100 transition-opacity">Year 1</div>
-</div>
-<div className="flex-1 bg-article-primary/40 rounded-t-sm relative group h-[60%]">
-<div className="absolute -top-8 w-full text-center text-xs font-sans opacity-0 group-hover:opacity-100 transition-opacity">Year 2</div>
-</div>
-<div className="flex-1 bg-article-primary/30 rounded-t-sm relative group h-[55%]">
-<div className="absolute -top-8 w-full text-center text-xs font-sans opacity-0 group-hover:opacity-100 transition-opacity">Year 3</div>
-</div>
-<div className="flex-1 bg-article-primary/60 rounded-t-sm relative group h-[85%]">
-<div className="absolute -top-8 w-full text-center text-xs font-sans opacity-0 group-hover:opacity-100 transition-opacity">Year 4</div>
-</div>
-<div className="flex-1 bg-article-primary rounded-t-sm relative group h-[95%]">
-<div className="absolute -top-8 w-full text-center text-xs font-bold text-article-primary opacity-100">Peak Year</div>
-</div>
-<div className="flex-1 bg-article-primary/50 rounded-t-sm relative group h-[70%]">
-<div className="absolute -top-8 w-full text-center text-xs font-sans opacity-0 group-hover:opacity-100 transition-opacity">Year 6</div>
-</div>
-</div>
-<div className="flex justify-between mt-4 text-xs font-sans text-gray-400 border-t border-gray-100 dark:border-gray-700 pt-2">
-<span>Low Influence</span>
-<span>High Influence</span>
-</div>
-</div>
-<h2 className="text-3xl font-bold mt-12 mb-6 text-[#111812] dark:text-white">Key Takeaways</h2>
-<ul className="space-y-4 mb-12 list-none pl-0">
-<li className="flex gap-4 items-start">
-<span className="material-symbols-outlined text-article-primary mt-1">check_circle</span>
-<span><strong>Cycles are universal.</strong> Whether it's a 10-year economic cycle or a 10-year Luck Pillar, the rhythm of rise and fall is constant.</span>
-</li>
-<li className="flex gap-4 items-start">
-<span className="material-symbols-outlined text-article-primary mt-1">check_circle</span>
-<span><strong>Context is king.</strong> Big Data provides the text, but philosophy provides the context. One without the other is incomplete.</span>
-</li>
-<li className="flex gap-4 items-start">
-<span className="material-symbols-outlined text-article-primary mt-1">check_circle</span>
-<span><strong>Prediction is preparation.</strong> The goal isn't to control the future, but to prepare our sails for the winds that are coming.</span>
-</li>
-</ul>
-<p className="leading-relaxed">
-                As we move forward into an increasingly quantified world, perhaps the most valuable data points aren't the ones we collect from our devices, but the ones we observe in nature and time itself.
-            </p>
+    {article?.content?.split('\n').map((paragraph: string, i: number) => {
+      if (paragraph.trim() === '') return <br key={i} />;
+      if (paragraph.startsWith('✨') || paragraph.startsWith('❗')) {
+        return <p key={i} className="text-xl leading-relaxed mb-6 font-serif font-bold text-article-primary">{paragraph}</p>;
+      }
+      return <p key={i} className="mb-6 leading-relaxed font-serif text-lg">{paragraph}</p>;
+    })}
 </article>
 {/*  Divider  */}
 <hr className="my-16 border-gray-200 dark:border-gray-800"/>
@@ -170,30 +164,15 @@ export default function ArticleDetail() {
 <h3 className="text-lg font-bold font-sans uppercase tracking-widest text-gray-500">You might also like</h3>
 </div>
 <div className="grid md:grid-cols-3 gap-8">
-{/*  Related Post 1  */}
-<a className="group block" href="#">
-<div className="mb-4 overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
-<div className="h-48 bg-cover bg-center transform group-hover:scale-105 transition-transform duration-500" data-alt="Minimalist desk setup with open notebook and pen" style={{ backgroundImage: "url('" + "https://lh3.googleusercontent.com/aida-public/AB6AXuCnoWW6G9uxDAzB9TlX9hTvvYGPsAWVN6eE35pw1Ftok3qNdmY0RsEZaa_ZAh0x5447iJwr1hx82bVGHz8qee3fCgZoK4rYoXPgxRBBXzJzliyS4uJG_fCl6S0VWwx5xNoDoP3NiJMPOjtaCNBKxS9J50ingrAXkkutHWjzT546Iyz-yHOcG_fXmSa0z7vh58-uWXFKR2ZXHdKNHKCIeaBdDIADzpQCIqAEJXlVQZTVSQe4AFhi7mipYFBd7NTxhYGyHwXh4AXYwXo" + "')" }}></div>
-</div>
-<h4 className="text-xl font-bold mb-2 group-hover:text-article-primary transition-colors text-[#111812] dark:text-white">Calculating Your Luck Cycle</h4>
-<p className="text-sm text-gray-500 font-sans">Understanding the 10-year pillars of destiny.</p>
-</a>
-{/*  Related Post 2  */}
-<a className="group block" href="#">
-<div className="mb-4 overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
-<div className="h-48 bg-cover bg-center transform group-hover:scale-105 transition-transform duration-500" data-alt="Digital dashboard showing complex data visualization graphs" style={{ backgroundImage: "url('" + "https://lh3.googleusercontent.com/aida-public/AB6AXuAgr1QstUPJ-6JHFG2l0aZixy_c0GtaknPiVIE9ctwjk00RljFHeEbsV_0_qR-yiF7MyEKj_EyLGtO4tC-yBZDOAlE6KaLHGpsmSu5if6UhqeB9cpZGI6MvOZHG1SPdMvRO_2uR43nrnf-OMPbm2M-Aed2FQilIJOmJ5XNUyiORcCBsK1OJZU2Z49E1e4muHjV5by8093E_ETOOKMO5Q3zIRhrkj4ZbSL_g-QOBc4hyaAs0X3XYKoSgCRoEghOTybrvqXmM5zVgAD4" + "')" }}></div>
-</div>
-<h4 className="text-xl font-bold mb-2 group-hover:text-article-primary transition-colors text-[#111812] dark:text-white">The Ethics of Predictive AI</h4>
-<p className="text-sm text-gray-500 font-sans">Where does algorithm end and fate begin?</p>
-</a>
-{/*  Related Post 3  */}
-<a className="group block" href="#">
-<div className="mb-4 overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
-<div className="h-48 bg-cover bg-center transform group-hover:scale-105 transition-transform duration-500" data-alt="Morning mist over a traditional Asian temple roof" style={{ backgroundImage: "url('" + "https://lh3.googleusercontent.com/aida-public/AB6AXuARgj8-12QJC9VKhmTlZEs-_tms4Is8SrmywyvJXU4VikZ6LDqJkRqsUM--F6oQ54EG80HwyNDwFXzeNvm-IuxTfc5qnL-QdS5nH-mk8j7kO6SAd9QiB4u88VDboAOk8osl5jvsbnFGC2vnry7bco9NP3CIDnNcKcVY8-N6V9LWkmwlFv4DRYo_gcf3WoM7m0rM5pTjigHqL1YLCcF--5KCUOZE7MSPJQgX8YpM__ML9clDM77tI2MDTSuMKoDYfDepJIXYI3w6ZJ8" + "')" }}></div>
-</div>
-<h4 className="text-xl font-bold mb-2 group-hover:text-article-primary transition-colors text-[#111812] dark:text-white">Five Elements in Modern Design</h4>
-<p className="text-sm text-gray-500 font-sans">Applying Wood, Fire, Earth, Metal, Water to UX.</p>
-</a>
+  {related.map(rel => (
+    <Link key={rel.id} className="group block" to={`/blog/${rel.slug}`}>
+      <div className="mb-4 overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
+        <div className="h-48 bg-cover bg-center transform group-hover:scale-105 transition-transform duration-500" style={{ backgroundImage: "url('" + (rel.image_poster || rel.image || "https://images.unsplash.com/photo-1551288049-bebda4e38f71") + "')" }}></div>
+      </div>
+      <h4 className="text-xl font-bold mb-2 group-hover:text-article-primary transition-colors text-[#111812] dark:text-white">{rel.title}</h4>
+      <p className="text-sm text-gray-500 font-sans line-clamp-2">{rel.summary || rel.content}</p>
+    </Link>
+  ))}
 </div>
 </section>
 </main>
