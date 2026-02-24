@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 export default function HmsLandingPage() {
     return (
-        <div className="bg-white text-hms-text-main antialiased overflow-x-hidden">
+        <div className="bg-white text-hms-text-main antialiased">
 
             {/*  Navbar  */}
             <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
@@ -26,7 +26,7 @@ export default function HmsLandingPage() {
                     </div>
                 </div>
             </header>
-            <main>
+            <main className="overflow-x-hidden">
                 {/*  Hero Section  */}
                 <section className="relative overflow-hidden pt-12 pb-16 lg:pt-24 lg:pb-32">
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

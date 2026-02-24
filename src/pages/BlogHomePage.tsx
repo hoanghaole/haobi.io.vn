@@ -34,7 +34,7 @@ export default function BlogHomePage() {
   }, []);
 
   return (
-    <div className="bg-blog-bg-light text-blog-text-main flex min-h-screen flex-col overflow-x-hidden antialiased selection:bg-blog-primary/20 selection:text-blog-primary" style={{ fontFamily: "'Noto Sans', sans-serif" }}>
+    <div className="bg-blog-bg-light text-blog-text-main flex min-h-screen flex-col antialiased selection:bg-blog-primary/20 selection:text-blog-primary" style={{ fontFamily: "'Noto Sans', sans-serif" }}>
 
       {/* Wrapper to handle font families for headings if possible, or just rely on CSS */}
       <style>{`
@@ -79,7 +79,7 @@ export default function BlogHomePage() {
               </button>
             </div>
           </header>
-          <main className="flex-1">
+          <main className="flex-1 overflow-x-hidden">
             {/*  Hero Section  */}
             <section className="relative px-6 py-12 lg:px-20 lg:py-20">
               <div className="mx-auto max-w-4xl text-center">

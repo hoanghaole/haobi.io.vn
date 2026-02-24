@@ -70,14 +70,14 @@ export default function ArticleDetail() {
       <div className="article-wrapper flex-grow w-full">
 
         {/*  Top Navbar  */}
-        <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-[#e5e7eb] dark:border-[#2a382e] px-10 py-4 bg-white dark:bg-[#1a2c1d]">
+        <header className="sticky top-0 z-50 flex items-center justify-between border-b border-solid border-[#e5e7eb] dark:border-[#2a382e] px-10 py-4 bg-white/95 backdrop-blur-md dark:bg-[#1a2c1d]/95">
           <div className="flex items-center gap-4 text-[#111812] dark:text-white">
             <div className="size-6 text-article-primary">
               <span className="material-symbols-outlined text-2xl">menu_book</span>
             </div>
             <h2 className="text-[#111812] dark:text-white text-xl font-bold leading-tight tracking-[-0.015em]">Haobi's Stories</h2>
           </div>
-          <div className="flex flex-1 justify-end gap-8 hidden md:flex">
+          <div className="hidden flex-1 justify-end gap-8 md:flex">
             <div className="flex items-center gap-9">
               <a className="text-[#111812] dark:text-gray-200 text-sm font-medium leading-normal hover:text-article-primary transition-colors" href="#">Home</a>
               <a className="text-[#111812] dark:text-gray-200 text-sm font-medium leading-normal hover:text-article-primary transition-colors" href="#">About</a>
@@ -93,7 +93,7 @@ export default function ArticleDetail() {
           </div>
         </header>
         {/*  Main Content Area  */}
-        <main className="flex-1 w-full max-w-4xl mx-auto px-6 py-10 md:py-16">
+        <main className="flex-1 w-full max-w-4xl mx-auto px-6 py-10 md:py-16 overflow-x-hidden">
           {/*  Breadcrumbs  */}
           <nav className="flex flex-wrap items-center gap-2 mb-8 text-sm font-sans">
             <Link className="text-sm font-medium hover:opacity-80 transition-colors" to="/">Trang chủ</Link>

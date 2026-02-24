@@ -2,9 +2,9 @@ import { Link } from 'react-router-dom';
 
 export default function EcoHubPage() {
     return (
-        <div className="bg-white text-slate-900 antialiased overflow-x-hidden">
+        <div className="bg-white text-slate-900 antialiased">
 
-            <div className="relative flex min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+            <div className="relative flex min-h-screen w-full flex-col group/design-root">
                 {/*  Header  */}
                 <header className="sticky top-0 z-50 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
                     <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -30,7 +30,7 @@ export default function EcoHubPage() {
                         </div>
                     </div>
                 </header>
-                <main className="flex-grow">
+                <main className="flex-grow overflow-x-hidden">
                     {/*  Hero Section  */}
                     <section className="relative overflow-hidden py-16 sm:py-24 lg:py-32">
                         <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
