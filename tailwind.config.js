@@ -18,6 +18,9 @@ export default {
         "hms-bg-subtle": "#f8f9fa",
         "hms-text-main": "#1e293b",
         "hms-text-muted": "#64748b",
+        "eco-primary": "#135bec",
+        "eco-bg-light": "#f6f6f8",
+        "eco-bg-dark": "#101622",
       },
       boxShadow: {
         "soft": "0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)",
