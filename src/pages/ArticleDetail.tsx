@@ -4,7 +4,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
 export default function ArticleDetail() {
-  const { menuItems } = useMenuItems();
+  const { menuItems, loading: menuLoading } = useMenuItems();
   const { slug } = useParams();
   const navigate = useNavigate();
   const [article, setArticle] = useState<any>(null);
@@ -96,18 +96,26 @@ export default function ArticleDetail() {
         <main className="flex-1 w-full max-w-4xl mx-auto px-6 py-10 md:py-16 overflow-x-hidden">
           {/*  Breadcrumbs  */}
           <nav className="flex flex-wrap items-center gap-2 mb-8 text-sm font-sans">
-            <Link className="text-sm font-medium hover:opacity-80 transition-colors" to="/">Trang chủ</Link>
-            {menuItems.map(item => (
-              <a
-                key={item.id}
-                className="text-sm font-medium hover:opacity-80 transition-colors"
-                href={item.url}
-                target={item.open_in_new ? "_blank" : "_self"}
-                rel={item.open_in_new ? "noopener noreferrer" : ""}
-              >
-                {item.label}
-              </a>
-            ))}
+            <Link className="text-sm font-medium hover:opacity-80 transition-colors shrink-0" to="/">Trang chủ</Link>
+            {menuLoading ? (
+              <>
+                <div className="h-3.5 w-16 bg-gray-200 dark:bg-gray-800 animate-pulse rounded"></div>
+                <div className="h-3.5 w-20 bg-gray-200 dark:bg-gray-800 animate-pulse rounded"></div>
+                <div className="h-3.5 w-24 bg-gray-200 dark:bg-gray-800 animate-pulse rounded"></div>
+              </>
+            ) : (
+              menuItems.map(item => (
+                <a
+                  key={item.id}
+                  className="text-sm font-medium hover:opacity-80 transition-colors shrink-0"
+                  href={item.url}
+                  target={item.open_in_new ? "_blank" : "_self"}
+                  rel={item.open_in_new ? "noopener noreferrer" : ""}
+                >
+                  {item.label}
+                </a>
+              ))
+            )}
           </nav>
           {/*  Article Header  */}
           <header className="mb-10 text-center md:text-left">

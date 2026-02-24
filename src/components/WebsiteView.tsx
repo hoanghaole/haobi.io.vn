@@ -76,11 +76,17 @@ export default function WebsiteView() {
                         <h2 className="text-slate-900 text-lg font-bold tracking-tight">Data & Automation Co.</h2>
                     </div>
                     <nav className="hidden md:flex items-center gap-8">
-                        {menuItems.length > 0 ? (
+                        {loading ? (
+                            <>
+                                <div className="h-4 w-16 bg-slate-200 animate-pulse rounded"></div>
+                                <div className="h-4 w-20 bg-slate-200 animate-pulse rounded"></div>
+                                <div className="h-4 w-24 bg-slate-200 animate-pulse rounded"></div>
+                            </>
+                        ) : menuItems.length > 0 ? (
                             menuItems.map((item) => (
                                 <a
                                     key={item.id}
-                                    className="text-slate-600 hover:text-primary text-sm font-medium transition-colors"
+                                    className="text-slate-600 hover:text-primary text-sm font-medium transition-colors flex shrink-0"
                                     href={item.url || "#"}
                                     target={item.open_in_new ? "_blank" : "_self"}
                                     rel={item.open_in_new ? "noopener noreferrer" : ""}
@@ -88,13 +94,7 @@ export default function WebsiteView() {
                                     {item.label}
                                 </a>
                             ))
-                        ) : (
-                            // Fallback menu khi đang tải hoặc không có dữ liệu
-                            <>
-                                <a className="text-slate-600 hover:text-primary text-sm font-medium transition-colors" href="#">Trang chủ</a>
-                                <a className="text-slate-600 hover:text-primary text-sm font-medium transition-colors" href="#services">Dịch vụ</a>
-                            </>
-                        )}
+                        ) : null}
                     </nav>
                     <div className="flex items-center gap-4">
                         <button className="hidden md:flex bg-primary hover:bg-primary-dark text-white text-sm font-bold h-10 px-5 rounded items-center justify-center transition-colors">

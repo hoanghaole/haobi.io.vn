@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
 export default function BlogHomePage() {
-  const { menuItems } = useMenuItems();
+  const { menuItems, loading: menuLoading } = useMenuItems();
   const [posts, setPosts] = useState<any[]>([]);
   const [featuredPost, setFeaturedPost] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -57,18 +57,26 @@ export default function BlogHomePage() {
               <h2 className="text-xl font-bold tracking-tight text-blog-text-main">Haobi's Journal</h2>
             </div>
             <nav className="hidden md:flex items-center gap-8">
-              <Link className="text-sm font-medium hover:text-blog-primary transition-colors" to="/">Trang chủ</Link>
-              {menuItems.map(item => (
-                <a
-                  key={item.id}
-                  className="text-sm font-medium hover:text-blog-primary transition-colors"
-                  href={item.url}
-                  target={item.open_in_new ? "_blank" : "_self"}
-                  rel={item.open_in_new ? "noopener noreferrer" : ""}
-                >
-                  {item.label}
-                </a>
-              ))}
+              <Link className="text-sm font-medium hover:text-blog-primary transition-colors shrink-0" to="/">Trang chủ</Link>
+              {menuLoading ? (
+                <>
+                  <div className="h-3.5 w-16 bg-blog-surface-light animate-pulse rounded"></div>
+                  <div className="h-3.5 w-20 bg-blog-surface-light animate-pulse rounded"></div>
+                  <div className="h-3.5 w-24 bg-blog-surface-light animate-pulse rounded"></div>
+                </>
+              ) : (
+                menuItems.map(item => (
+                  <a
+                    key={item.id}
+                    className="text-sm font-medium hover:text-blog-primary transition-colors shrink-0"
+                    href={item.url}
+                    target={item.open_in_new ? "_blank" : "_self"}
+                    rel={item.open_in_new ? "noopener noreferrer" : ""}
+                  >
+                    {item.label}
+                  </a>
+                ))
+              )}
             </nav>
             <div className="flex items-center gap-4">
               <button className="hidden sm:flex rounded-full bg-blog-primary px-5 py-2 text-sm font-bold text-white shadow-sm hover:bg-blog-primary/90 transition-colors">
