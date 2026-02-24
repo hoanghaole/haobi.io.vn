@@ -29,6 +29,9 @@ export default {
         "blog-surface-light": "#F3F1E9",
         "blog-text-main": "#2C332D",
         "blog-text-muted": "#5C665D",
+        "article-primary": "#17cf36",
+        "article-bg-light": "#f6f8f6",
+        "article-bg-dark": "#112114",
       },
       boxShadow: {
         "soft": "0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)",

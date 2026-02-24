@@ -4,6 +4,7 @@ import WebsiteView from './components/WebsiteView';
 import HmsLandingPage from './pages/HmsLandingPage';
 import EcoHubPage from './pages/EcoHubPage';
 import BlogHomePage from './pages/BlogHomePage';
+import ArticleDetail from './pages/ArticleDetail';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/hmsxanh" element={<HmsLandingPage />} />
         <Route path="/eco" element={<EcoHubPage />} />
         <Route path="/blog" element={<BlogHomePage />} />
+        <Route path="/article" element={<ArticleDetail />} />
       </Routes>
     </BrowserRouter>
   );
