@@ -188,7 +188,7 @@ export default function WebsiteView() {
                                 <h3 className="text-3xl font-bold text-slate-900">Sản Phẩm & Dịch Vụ</h3>
                                 <p className="text-slate-600 mt-4 text-lg">Tạo đột phá thông qua các giải pháp phần mềm, tự động hóa và tư vấn chiến lược.</p>
                             </div>
-                            <Link className="text-primary hover:text-primary-dark font-semibold flex items-center gap-1 group" to="/products">
+                            <Link className="text-primary hover:text-primary-dark font-semibold flex items-center gap-1 group" to="/eco">
                                 Xem tất cả
                                 <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
                             </Link>

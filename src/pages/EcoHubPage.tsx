@@ -1,6 +1,33 @@
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { supabase } from '../lib/supabase';
 
 export default function EcoHubPage() {
+    const [products, setProducts] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function loadProducts() {
+            try {
+                const { data: productsData, error: productsError } = await supabase
+                    .from('products')
+                    .select('*')
+                    .order('order', { ascending: true });
+
+                if (productsError) throw productsError;
+                if (productsData) {
+                    setProducts(productsData);
+                }
+            } catch (err) {
+                console.error("Error fetching products from Supabase:", err);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        loadProducts();
+    }, []);
+
     return (
         <div className="bg-white text-slate-900 antialiased">
 
@@ -50,130 +77,59 @@ export default function EcoHubPage() {
                             </div>
                         </div>
                     </section>
-                    {/*  Bento Grid Section  */}
+                    {/*  Products Grid Section  */}
                     <section className="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8" id="products">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 auto-rows-[minmax(180px,auto)]">
-                            {/*  Card 1 (Large)  */}
-                            <div className="group relative flex flex-col overflow-hidden rounded-2xl bg-white dark:bg-slate-800 shadow-sm transition-all hover:shadow-md md:col-span-2 lg:col-span-2 xl:col-span-2 md:row-span-2 ring-1 ring-slate-200 dark:ring-slate-700">
-                                <div className="absolute right-0 top-0 -mt-8 -mr-8 h-48 w-48 rounded-full bg-purple-100 blur-3xl opacity-50 dark:bg-purple-900/30"></div>
-                                <div className="p-8 flex flex-col h-full z-10">
-                                    <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-purple-50 text-purple-600 dark:bg-purple-900/20 dark:text-purple-400">
-                                        <span className="material-symbols-outlined text-2xl">auto_fix_high</span>
-                                    </div>
-                                    <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Visualized Bazi (Tử Vi)</h3>
-                                    <p className="mt-2 text-slate-600 dark:text-slate-400 max-w-md">
-                                        Unlock ancient wisdom with modern data visualization. Understand your destiny path through interactive star charts and deep analytics.
-                                    </p>
-                                    <div className="mt-auto pt-8 flex items-center text-eco-primary font-medium group-hover:underline cursor-pointer">
-                                        Explore <span className="material-symbols-outlined text-sm ml-1">arrow_outward</span>
-                                    </div>
-                                </div>
-                                <div className="absolute bottom-0 right-0 w-1/2 h-full bg-gradient-to-l from-purple-50/50 to-transparent dark:from-purple-900/10 pointer-events-none"></div>
-                                <div className="h-64 w-full bg-cover bg-center mt-4 md:absolute md:bottom-4 md:right-4 md:w-1/2 md:h-2/3 rounded-xl overflow-hidden shadow-sm" data-alt="Abstract purple star chart visualization" style={{ backgroundImage: "url('" + "https://lh3.googleusercontent.com/aida-public/AB6AXuDjRbj3FvO4YxMi1ve-otcnReFuIa0tX8iHyh2tTHiRvR9OqsyuAiGCEQqZ8VkMU2nu91R-1GnXvvTfqsdXLXZQzd--787XD52Hl00XZvVSP-bQMa6AAr9C4EdpzzRh8K_1yNHxH9ailt-yRNBfCPGdBvG2zlZzdPi3dsB_qbsNUCRXTpJpsFA4ric4ptY8XTo4QInp2fNex1S3uCKoq_kgXwPsu5nbZReBQFkBI_X4BkQWkSE_J67RaBOOlNVsKT5gXxJr_ZiCRk8" + "')" }}></div>
-                            </div>
-                            {/*  Card 2 (Medium)  */}
-                            <div className="group relative flex flex-col overflow-hidden rounded-2xl bg-white dark:bg-slate-800 shadow-sm transition-all hover:shadow-md md:col-span-1 lg:col-span-1 md:row-span-2 ring-1 ring-slate-200 dark:ring-slate-700">
-                                <div className="absolute left-0 bottom-0 -mb-8 -ml-8 h-40 w-40 rounded-full bg-emerald-100 blur-3xl opacity-50 dark:bg-emerald-900/30"></div>
-                                <div className="p-6 flex flex-col h-full z-10">
-                                    <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400">
-                                        <span className="material-symbols-outlined text-xl">track_changes</span>
-                                    </div>
-                                    <h3 className="text-xl font-bold text-slate-900 dark:text-white">OKR Management</h3>
-                                    <p className="mt-2 text-sm text-slate-600 dark:text-slate-400 mb-6">
-                                        Track goals and key results efficiently with professional progress tracking and team alignment tools.
-                                    </p>
-                                    {/*  Mock UI for OKR  */}
-                                    <div className="mt-auto space-y-3 bg-slate-50 dark:bg-slate-900/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700">
-                                        <div>
-                                            <div className="flex justify-between text-xs mb-1">
-                                                <span className="font-medium text-slate-700 dark:text-slate-300">Q3 Revenue</span>
-                                                <span className="text-emerald-600 font-bold">78%</span>
-                                            </div>
-                                            <div className="h-1.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                                                <div className="h-full bg-emerald-500 w-[78%] rounded-full"></div>
-                                            </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {loading ? (
+                                Array.from({ length: 6 }).map((_, i) => (
+                                    <div key={i} className="flex flex-col gap-4 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm transition-all animate-pulse h-full">
+                                        <div className="h-40 w-full rounded-xl bg-slate-200 dark:bg-slate-700 mb-2"></div>
+                                        <div className="flex gap-2">
+                                            <div className="h-5 w-16 bg-slate-200 dark:bg-slate-700 rounded text-[10px]"></div>
+                                            <div className="h-5 w-24 bg-slate-200 dark:bg-slate-700 rounded text-[10px]"></div>
                                         </div>
-                                        <div>
-                                            <div className="flex justify-between text-xs mb-1">
-                                                <span className="font-medium text-slate-700 dark:text-slate-300">User Growth</span>
-                                                <span className="text-emerald-600 font-bold">45%</span>
-                                            </div>
-                                            <div className="h-1.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                                                <div className="h-full bg-emerald-500 w-[45%] rounded-full"></div>
-                                            </div>
+                                        <div className="h-6 w-3/4 bg-slate-200 dark:bg-slate-700 rounded mt-2"></div>
+                                        <div className="h-4 w-full bg-slate-200 dark:bg-slate-700 rounded"></div>
+                                        <div className="h-4 w-full bg-slate-200 dark:bg-slate-700 rounded"></div>
+                                        <div className="h-4 w-2/3 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                                    </div>
+                                ))
+                            ) : products.length > 0 ? (
+                                products.map((product) => (
+                                    <div key={product.id} className="group relative flex flex-col gap-4 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-eco-primary/50 hover:shadow-lg transition-all h-full ring-1 ring-transparent hover:ring-eco-primary/20">
+                                        {/* Thumnail if image provided */}
+                                        <div className="h-48 w-full rounded-xl bg-slate-50 dark:bg-slate-900/50 overflow-hidden mb-2 relative">
+                                            {product.image ? (
+                                                <img src={product.image} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-slate-400 dark:text-slate-600 bg-slate-100 dark:bg-slate-800">
+                                                    <span className="material-symbols-outlined text-4xl opacity-50">image</span>
+                                                </div>
+                                            )}
                                         </div>
-                                    </div>
-                                    <div className="mt-4 flex items-center text-eco-primary text-sm font-medium group-hover:underline cursor-pointer">
-                                        View Dashboard <span className="material-symbols-outlined text-sm ml-1">arrow_forward</span>
-                                    </div>
-                                </div>
-                            </div>
-                            {/*  Card 3 (Medium)  */}
-                            <div className="group relative flex flex-col overflow-hidden rounded-2xl bg-white dark:bg-slate-800 shadow-sm transition-all hover:shadow-md md:col-span-1 lg:col-span-1 md:row-span-1 ring-1 ring-slate-200 dark:ring-slate-700">
-                                <div className="p-6 flex flex-col h-full">
-                                    <div className="flex items-start justify-between">
-                                        <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-500 dark:bg-blue-900/20 dark:text-blue-400">
-                                            <span className="material-symbols-outlined text-xl">monitor_heart</span>
+
+                                        <div className="flex gap-2">
+                                            <span className="px-2.5 py-1 rounded-md text-[10px] font-bold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 uppercase tracking-wider">{product.category}</span>
+                                            {product.tag && <span className="px-2.5 py-1 rounded-md text-[10px] font-bold bg-eco-primary/10 text-eco-primary uppercase tracking-wider">{product.tag}</span>}
                                         </div>
-                                        <div className="h-8 w-16 bg-blue-50 dark:bg-blue-900/20 rounded flex items-center justify-center">
-                                            <svg className="w-12 h-6 text-blue-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 50 20">
-                                                <path d="M0 10 H10 L15 2 L20 18 L25 10 H35 L40 5 L45 15 H50" strokeLinecap="round" strokeLinejoin="round"></path>
-                                            </svg>
-                                        </div>
+
+                                        <h3 className="text-xl font-bold text-slate-900 dark:text-white leading-tight">{product.title}</h3>
+                                        <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm flex-1">
+                                            {product.description}
+                                        </p>
+
+                                        <a className="inline-flex items-center text-sm font-bold text-eco-primary hover:text-blue-600 mt-4 group/btn" href={product.link || "#"} target="_blank" rel="noopener noreferrer">
+                                            {product.cta || "Khám phá ngay"} <span className="material-symbols-outlined text-sm ml-1 transition-transform group-hover/btn:translate-x-1">arrow_forward</span>
+                                        </a>
                                     </div>
-                                    <h3 className="mt-4 text-lg font-bold text-slate-900 dark:text-white">Elderly Care Monitor</h3>
-                                    <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                                        Real-time health monitoring and alerts for peace of mind.
-                                    </p>
-                                    <div className="mt-4 flex items-center text-eco-primary text-sm font-medium group-hover:underline cursor-pointer">
-                                        Learn more <span className="material-symbols-outlined text-sm ml-1">arrow_forward</span>
-                                    </div>
+                                ))
+                            ) : (
+                                <div className="col-span-full flex flex-col items-center justify-center py-20 px-4 text-center border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-800">
+                                    <span className="material-symbols-outlined text-5xl text-slate-300 dark:text-slate-600 mb-4">apps</span>
+                                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Chưa có sản phẩm nào</h3>
+                                    <p className="text-slate-500 dark:text-slate-400 max-w-sm">Hệ thống đang cập nhật các giải pháp công nghệ và tự động hoá mới nhất. Xin vui lòng quay lại sau.</p>
                                 </div>
-                            </div>
-                            {/*  Card 4 (Small)  */}
-                            <div className="group relative flex flex-col overflow-hidden rounded-2xl bg-white dark:bg-slate-800 shadow-sm transition-all hover:shadow-md md:col-span-1 lg:col-span-1 ring-1 ring-slate-200 dark:ring-slate-700">
-                                <div className="p-6">
-                                    <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-orange-50 text-orange-500 dark:bg-orange-900/20 dark:text-orange-400">
-                                        <span className="material-symbols-outlined text-xl">bar_chart_4_bars</span>
-                                    </div>
-                                    <h3 className="text-base font-bold text-slate-900 dark:text-white">Chart Dictionary</h3>
-                                    <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
-                                        A comprehensive library of colorful data visualization charts for developers.
-                                    </p>
-                                </div>
-                                {/*  Decorative Mini Charts  */}
-                                <div className="px-6 pb-6 flex gap-2 overflow-hidden opacity-60">
-                                    <div className="w-8 h-8 rounded bg-orange-100 dark:bg-orange-900/30"></div>
-                                    <div className="w-8 h-8 rounded bg-blue-100 dark:bg-blue-900/30"></div>
-                                    <div className="w-8 h-8 rounded bg-purple-100 dark:bg-purple-900/30"></div>
-                                    <div className="w-8 h-8 rounded bg-emerald-100 dark:bg-emerald-900/30"></div>
-                                </div>
-                            </div>
-                            {/*  Card 5 (Small)  */}
-                            <div className="group relative flex flex-col overflow-hidden rounded-2xl bg-white dark:bg-slate-800 shadow-sm transition-all hover:shadow-md md:col-span-1 lg:col-span-1 ring-1 ring-slate-200 dark:ring-slate-700">
-                                <div className="absolute right-0 top-0 h-24 w-24 bg-gradient-to-br from-indigo-500/10 to-transparent rounded-bl-full"></div>
-                                <div className="p-6">
-                                    <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-indigo-500 dark:bg-indigo-900/20 dark:text-indigo-400">
-                                        <span className="material-symbols-outlined text-xl">lens_blur</span>
-                                    </div>
-                                    <h3 className="text-base font-bold text-slate-900 dark:text-white">Personalized AI Camera</h3>
-                                    <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
-                                        Smart photography assistance powered by friendly AI algorithms.
-                                    </p>
-                                    <div className="mt-4 flex items-center text-eco-primary text-xs font-medium group-hover:underline cursor-pointer">
-                                        Try Demo <span className="material-symbols-outlined text-xs ml-1">arrow_forward</span>
-                                    </div>
-                                </div>
-                            </div>
-                            {/*  Call to Action Card  */}
-                            <div className="group relative flex flex-col items-center justify-center overflow-hidden rounded-2xl bg-slate-900 dark:bg-eco-primary shadow-md transition-all hover:shadow-lg md:col-span-2 lg:col-span-2 text-center p-8">
-                                <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
-                                <h3 className="relative text-2xl font-bold text-white mb-2">Have a custom problem?</h3>
-                                <p className="relative text-slate-300 mb-6 max-w-sm">Let's build a solution together. I specialize in turning complex data into intuitive interfaces.</p>
-                                <button className="relative bg-white text-slate-900 hover:bg-slate-100 font-semibold py-2 px-6 rounded-lg transition-colors">
-                                    Contact Me
-                                </button>
-                            </div>
+                            )}
                         </div>
                     </section>
                 </main>
