@@ -8,6 +8,7 @@ import {
     Image as ImageIcon
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { Link } from 'react-router-dom';
 
 export default function WebsiteView() {
     const [hero, setHero] = useState<any>(null);
@@ -187,10 +188,10 @@ export default function WebsiteView() {
                                 <h3 className="text-3xl font-bold text-slate-900">Sản Phẩm & Dịch Vụ</h3>
                                 <p className="text-slate-600 mt-4 text-lg">Tạo đột phá thông qua các giải pháp phần mềm, tự động hóa và tư vấn chiến lược.</p>
                             </div>
-                            <a className="text-primary hover:text-primary-dark font-semibold flex items-center gap-1 group" href="#">
+                            <Link className="text-primary hover:text-primary-dark font-semibold flex items-center gap-1 group" to="/products">
                                 Xem tất cả
                                 <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
-                            </a>
+                            </Link>
                         </div>
 
                         <div className="grid md:grid-cols-3 gap-8">
