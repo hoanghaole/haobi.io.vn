@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useMenuItems } from '../hooks/useMenuItems';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export default function ArticleDetail() {
   const { menuItems, loading: menuLoading } = useMenuItems();
@@ -142,14 +144,10 @@ export default function ArticleDetail() {
             </figure>
           )}
           {/*  Content Body  */}
-          <article className="prose prose-lg prose-headings:font-display prose-p:font-display prose-li:font-display max-w-none text-[#111812]/90 dark:text-gray-300">
-            {article?.content?.split('\n').map((paragraph: string, i: number) => {
-              if (paragraph.trim() === '') return <br key={i} />;
-              if (paragraph.startsWith('✨') || paragraph.startsWith('❗')) {
-                return <p key={i} className="text-xl leading-relaxed mb-6 font-serif font-bold text-article-primary">{paragraph}</p>;
-              }
-              return <p key={i} className="mb-6 leading-relaxed font-serif text-lg">{paragraph}</p>;
-            })}
+          <article className="prose prose-lg prose-headings:font-display prose-p:font-display prose-li:font-display max-w-none text-[#111812]/90 dark:text-gray-300 dark:prose-invert">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {article?.content || ''}
+            </ReactMarkdown>
           </article>
           {/*  Divider  */}
           <hr className="my-16 border-gray-200 dark:border-gray-800" />
