@@ -3,7 +3,15 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    @apply bg-background-light text-slate-800 font-display antialiased overflow-x-hidden;
+    @apply m-0 bg-white text-neutral-950 font-sans antialiased overflow-x-hidden;
+  }
+
+  ::selection {
+    @apply bg-neutral-950 text-white;
   }
 }

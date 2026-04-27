@@ -1,42 +1,48 @@
-name: Deploy to AZDIGI (haobi.io.vn)
+name: Deploy haobi.io.vn
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-haobi-production
+  cancel-in-progress: true
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🚚 Checkout code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: ⚙️ Setup Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
+          cache: npm
 
-      - name: 📦 Install dependencies
-        run: npm install --legacy-peer-deps
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
 
-      - name: 🏗️ Build project
+      - name: Build project
         run: npm run build
         env:
-          NODE_OPTIONS: "--max-old-space-size=4096"
-          # Add other env vars here if needed in the future
+          NODE_OPTIONS: --max-old-space-size=4096
+          # Uncomment if the site needs Supabase at build time.
           # VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           # VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
-      - name: 🚀 Deploy to AZDIGI via FTP
+      - name: Deploy dist to haobi.io.vn via explicit FTPS
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: 21
+          protocol: ftps
           local-dir: ./dist/
           server-dir: ./
           dangerous-clean-slate: false

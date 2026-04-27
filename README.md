@@ -71,3 +71,24 @@ export default defineConfig([
   },
 ])
 ```
+
+## Deploy to haobi.io.vn
+
+Production deploy is handled by GitHub Actions: `.github/workflows/deploy.yml`.
+
+Required GitHub repository secrets:
+
+- `FTP_SERVER`: `ftp.haobi.io.vn`
+- `FTP_USERNAME`: `lienhe@haobi.io.vn`
+- `FTP_PASSWORD`: FTP/FTPS password from hosting control panel
+- Optional `FTP_SERVER_DIR`: remote deploy directory, default `./`
+
+Workflow behavior:
+
+- Runs on push to `main`
+- Can be run manually with `workflow_dispatch`
+- Builds with `npm ci --legacy-peer-deps` and `npm run build`
+- Uploads `dist/` through explicit FTPS on port `21`
+- Does not clean remote files by default (`dangerous-clean-slate: false`)
+
+Never commit FTP passwords or build secrets into this repository.
