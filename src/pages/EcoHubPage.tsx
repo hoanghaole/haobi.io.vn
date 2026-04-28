@@ -1,209 +1,214 @@
+import { ArrowRight, CheckCircle2, Cpu, Mail, Monitor, Server, Workflow } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const hardwareProducts = [
+const miniPcProducts = [
   {
-    id: 'n100-starter',
-    category: 'Mini PC',
-    tag: 'Starter',
-    title: 'Haobi Mini PC N100 Starter',
-    price: 'Dự kiến 4,9–6,9 triệu',
-    description:
-      'Máy nhỏ gọn cho OpenClaw cá nhân, n8n nhẹ, Telegram/Zalo automation và dashboard đơn giản chạy 24/7.',
-    specs: ['Intel N100', '16GB RAM', '512GB NVMe', '2 màn hình'],
-    cta: 'Xem gói OpenClaw',
-    link: '/openclaw-mini-pc',
-    icon: 'memory',
+    name: 'Haobi Mini PC N100 Starter',
+    role: 'Máy khởi đầu cho OpenClaw cá nhân',
+    price: '4,9–6,9 triệu',
+    specs: ['Intel N100', '16GB RAM', '512GB NVMe', 'Ubuntu / Windows + WSL'],
+    fit: 'Phù hợp chạy OpenClaw, n8n nhẹ, Telegram bot, Obsidian workflow và báo cáo định kỳ.',
   },
   {
-    id: 'n305-pro',
-    category: 'Mini PC',
-    tag: 'Balanced',
-    title: 'Haobi Mini PC N305 Pro',
-    price: 'Dự kiến 7,9–9,9 triệu',
-    description:
-      'Cấu hình cân bằng cho người cần nhiều tab, nhiều workflow, OpenClaw + n8n + báo cáo định kỳ ổn định hơn.',
-    specs: ['Intel i3-N305', '32GB RAM', '1TB NVMe', '3 màn hình'],
-    cta: 'Tư vấn cấu hình',
-    link: 'mailto:hello@haobi.io.vn?subject=Tu%20van%20Haobi%20Mini%20PC%20N305',
-    icon: 'developer_board',
+    name: 'Haobi Mini PC N305 Pro',
+    role: 'Cấu hình cân bằng cho automation 24/7',
+    price: '7,9–9,9 triệu',
+    specs: ['Intel i3-N305', '32GB RAM', '1TB NVMe', '2.5G LAN'],
+    fit: 'Dành cho nhiều workflow hơn: n8n, dashboard, đồng bộ Sheets/Lark/Supabase và agent chạy nền.',
   },
   {
-    id: '7840hs-trading',
-    category: 'Trading Station',
-    tag: 'Khuyến nghị',
-    title: 'Haobi Trading Box 7840HS',
-    price: 'Dự kiến 12,9–16,9 triệu',
-    description:
-      'Mini PC mạnh cho trading đa màn, TradingView, app broker, Excel, trình duyệt nhiều tab và OpenClaw chạy nền.',
+    name: 'Haobi Trading Box 7840HS',
+    role: 'Máy trading đa màn hình',
+    price: '12,9–16,9 triệu',
     specs: ['Ryzen 7 7840HS', '32GB DDR5', '1TB NVMe', '3–4 màn hình'],
-    cta: 'Xem cấu hình đề xuất',
-    link: '/openclaw-mini-pc',
-    icon: 'monitoring',
-    highlighted: true,
+    fit: 'Dành cho TradingView, app broker, Excel, nhiều tab trình duyệt và OpenClaw theo dõi/báo cáo nền.',
+    featured: true,
   },
   {
-    id: '8845hs-ai-server',
-    category: 'AI Server',
-    tag: 'Premium',
-    title: 'Haobi AI Ops Box 8845HS',
-    price: 'Dự kiến 15,9–22,9 triệu',
-    description:
-      'Máy mini server cho nhiều agent, Docker nhẹ, workflow dữ liệu, backup nội bộ và vận hành AI automation nghiêm túc.',
-    specs: ['Ryzen 7 8845HS', '32–64GB RAM', '1–2TB NVMe', '2.5G LAN'],
-    cta: 'Đặt lịch pilot',
-    link: 'mailto:hello@haobi.io.vn?subject=Pilot%20Haobi%20AI%20Ops%20Box',
-    icon: 'hub',
+    name: 'Haobi AI Ops Box 8845HS',
+    role: 'Mini server cho vận hành AI nghiêm túc',
+    price: '15,9–22,9 triệu',
+    specs: ['Ryzen 7 8845HS', '32–64GB RAM', '1–2TB NVMe', 'Docker-ready'],
+    fit: 'Dành cho nhiều agent, pipeline dữ liệu, backup nội bộ và workflow doanh nghiệp nhỏ.',
   },
 ];
 
-const serviceSolutions = [
+const services = [
+  {
+    title: 'OpenClaw + n8n setup',
+    text: 'Cài đặt máy, gateway, bot, workflow mẫu, backup cơ bản và hướng dẫn vận hành.',
+    link: '/openclaw-mini-pc',
+  },
   {
     title: 'Screenshot-to-Knowledge OS',
-    text: 'Biến ảnh chụp màn hình thành note Obsidian có cấu trúc, có review queue và có thể tìm lại bằng hội thoại.',
+    text: 'Biến ảnh chụp màn hình thành note Obsidian có cấu trúc, có log và review queue.',
     link: '/screenshot-to-knowledge',
-    label: 'Office notes automation',
   },
   {
-    title: 'OpenClaw + n8n Setup',
-    text: 'Cài OpenClaw, n8n, Telegram bot, lịch báo cáo và workflow mẫu trên mini PC hoặc VPS riêng.',
-    link: '/openclaw-mini-pc',
-    label: 'AI automation service',
-  },
-  {
-    title: 'Trading Workflow Desk',
-    text: 'Bố trí máy, màn hình, browser profile, app trading, cảnh báo tin tức và checklist vận hành cho trader cá nhân.',
-    link: 'mailto:hello@haobi.io.vn?subject=Trading%20Workflow%20Desk',
-    label: 'Trading ops service',
+    title: 'Trading workflow desk',
+    text: 'Sắp xếp môi trường giao dịch: app, màn hình, checklist, cảnh báo và báo cáo định kỳ.',
+    link: 'mailto:hello@haobi.io.vn?subject=Trading%20workflow%20desk',
   },
 ];
 
 export default function EcoHubPage() {
   return (
-    <div className="min-h-screen bg-slate-950 text-white antialiased">
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute left-[-10rem] top-[-10rem] h-96 w-96 rounded-full bg-blue-500/20 blur-3xl" />
-        <div className="absolute right-[-12rem] top-32 h-[30rem] w-[30rem] rounded-full bg-emerald-400/15 blur-3xl" />
-        <div className="absolute bottom-[-12rem] left-1/2 h-[28rem] w-[28rem] -translate-x-1/2 rounded-full bg-violet-500/10 blur-3xl" />
-      </div>
-
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/80 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link to="/" className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white text-slate-950">
-              <span className="material-symbols-outlined text-xl">storefront</span>
-            </div>
-            <div>
-              <p className="text-sm font-black leading-none">Haobi Product Shelf</p>
-              <p className="text-xs text-slate-400">Mini PC · AI automation · Trading desk</p>
-            </div>
-          </Link>
-          <nav className="hidden items-center gap-8 text-sm text-slate-300 md:flex">
-            <a className="hover:text-white" href="#hardware">Sản phẩm</a>
-            <a className="hover:text-white" href="#solutions">Giải pháp</a>
-            <Link className="hover:text-white" to="/">Trang chủ</Link>
+    <div className="min-h-screen bg-white text-neutral-950">
+      <header className="sticky top-0 z-50 border-b border-neutral-200 bg-white/90 backdrop-blur">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
+          <Link to="/" className="text-sm font-semibold uppercase tracking-[0.28em]">Haobi</Link>
+          <nav className="hidden items-center gap-8 text-sm text-neutral-600 md:flex">
+            <Link to="/" className="hover:text-black">Trang chủ</Link>
+            <a href="#mini-pc" className="hover:text-black">Mini PC</a>
+            <a href="#services" className="hover:text-black">Dịch vụ</a>
+            <Link to="/blog" className="hover:text-black">Blog</Link>
           </nav>
-          <a href="mailto:hello@haobi.io.vn?subject=Tu%20van%20san%20pham%20Haobi" className="rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-950 transition hover:bg-emerald-200">
-            Hỏi cấu hình
-          </a>
+          <a href="mailto:hello@haobi.io.vn" className="rounded-full border border-neutral-900 px-4 py-2 text-sm font-medium hover:bg-neutral-950 hover:text-white">Liên hệ</a>
         </div>
       </header>
 
-      <main className="relative z-10">
-        <section className="mx-auto max-w-7xl px-4 py-20 text-center sm:px-6 lg:px-8 lg:py-28">
-          <p className="text-sm font-black uppercase tracking-[0.32em] text-emerald-300">Product first</p>
-          <h1 className="mx-auto mt-4 max-w-5xl text-5xl font-black tracking-tight sm:text-6xl lg:text-7xl">
-            Mini PC cài sẵn cho OpenClaw, trading và automation cá nhân.
-          </h1>
-          <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-slate-300">
-            Trang này tách rõ <b>sản phẩm phần cứng</b> và <b>giải pháp dịch vụ</b>: khách có thể mua máy trước,
-            rồi chọn thêm setup OpenClaw, n8n, screenshot workflow hoặc trading desk khi cần.
-          </p>
-          <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
-            <a href="#hardware" className="rounded-2xl bg-emerald-300 px-7 py-4 font-black text-slate-950 transition hover:bg-emerald-200">
-              Xem mini PC
-            </a>
-            <a href="#solutions" className="rounded-2xl border border-white/15 bg-white/5 px-7 py-4 font-bold text-white transition hover:bg-white/10">
-              Xem dịch vụ kèm theo
-            </a>
-          </div>
-        </section>
-
-        <section id="hardware" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-          <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p className="text-sm font-black uppercase tracking-[0.25em] text-emerald-300">Sản phẩm phần cứng</p>
-              <h2 className="mt-3 text-4xl font-black tracking-tight">Mini PC chọn lọc để bán thử</h2>
-            </div>
-            <p className="max-w-xl text-sm leading-6 text-slate-400">
-              Giá là khung dự kiến sau nhập hàng, kiểm tra, cài hệ điều hành cơ bản và bảo hành/pilot nội bộ. Chốt giá theo lô hàng thực tế.
+      <main>
+        <section className="mx-auto grid max-w-6xl gap-12 px-5 py-20 md:grid-cols-[1.05fr_0.95fr] md:py-28">
+          <div>
+            <p className="mb-6 text-xs font-semibold uppercase tracking-[0.32em] text-neutral-500">Product / Mini PC / AI automation</p>
+            <h1 className="max-w-4xl text-5xl font-semibold tracking-tight text-neutral-950 sm:text-6xl lg:text-7xl">
+              Mini PC thực dụng cho OpenClaw, trading và automation.
+            </h1>
+            <p className="mt-8 max-w-2xl text-lg leading-8 text-neutral-600">
+              Haobi Product Shelf tập trung vào máy nhỏ gọn, dễ triển khai, đủ ổn định để chạy 24/7. Sản phẩm phần cứng được tách rõ khỏi các gói dịch vụ cài đặt và workflow đi kèm.
             </p>
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+              <a href="#mini-pc" className="inline-flex items-center justify-center gap-2 rounded-full bg-neutral-950 px-6 py-3 text-sm font-semibold text-white hover:bg-neutral-800">
+                Xem sản phẩm <ArrowRight size={16} />
+              </a>
+              <a href="#services" className="inline-flex items-center justify-center rounded-full border border-neutral-300 px-6 py-3 text-sm font-semibold text-neutral-950 hover:border-neutral-950">
+                Xem dịch vụ kèm theo
+              </a>
+            </div>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-            {hardwareProducts.map((product) => (
-              <article
-                key={product.id}
-                className={`group flex h-full flex-col rounded-[2rem] border p-6 transition ${
-                  product.highlighted
-                    ? 'border-emerald-300/50 bg-emerald-300/[0.08] shadow-2xl shadow-emerald-500/10'
-                    : 'border-white/10 bg-white/[0.045] hover:border-white/25'
-                }`}
-              >
-                <div className="mb-6 flex h-40 items-center justify-center overflow-hidden rounded-[1.5rem] border border-white/10 bg-slate-900/80">
-                  <div className="relative flex h-24 w-36 items-center justify-center rounded-3xl border border-white/15 bg-gradient-to-br from-slate-700 to-slate-950 shadow-2xl">
-                    <div className="absolute -top-3 h-3 w-24 rounded-t-xl bg-slate-700" />
-                    <span className="material-symbols-outlined text-4xl text-emerald-300">{product.icon}</span>
-                    <div className="absolute bottom-4 right-5 h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_16px_rgba(110,231,183,0.9)]" />
-                  </div>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <span className="rounded-full bg-white/10 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-slate-300">{product.category}</span>
-                  <span className="rounded-full bg-emerald-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-emerald-300">{product.tag}</span>
-                </div>
-                <h3 className="mt-4 text-2xl font-black leading-tight">{product.title}</h3>
-                <p className="mt-3 text-xl font-black text-emerald-200">{product.price}</p>
-                <p className="mt-4 flex-1 text-sm leading-6 text-slate-300">{product.description}</p>
-                <div className="mt-6 grid grid-cols-2 gap-2">
-                  {product.specs.map((spec) => (
-                    <div key={spec} className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-bold text-slate-200">
-                      {spec}
-                    </div>
-                  ))}
-                </div>
-                <a href={product.link} className="mt-6 inline-flex items-center justify-between rounded-2xl bg-white px-4 py-3 text-sm font-black text-slate-950 transition group-hover:bg-emerald-200">
-                  {product.cta}
-                  <span className="material-symbols-outlined text-base">arrow_forward</span>
-                </a>
-              </article>
-            ))}
-          </div>
+          <aside className="border border-neutral-200 bg-neutral-50 p-6 md:p-8">
+            <div className="mb-10 flex items-center justify-between border-b border-neutral-200 pb-5">
+              <span className="text-sm font-medium text-neutral-500">Product principle</span>
+              <Cpu size={20} />
+            </div>
+            <div className="space-y-8">
+              <div>
+                <p className="text-4xl font-semibold">4 cấu hình</p>
+                <p className="mt-2 text-sm leading-6 text-neutral-600">Từ máy khởi đầu N100 đến mini server Ryzen cho nhiều agent và workflow hơn.</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4 border-t border-neutral-200 pt-6">
+                <Metric value="24/7" label="chạy nền" />
+                <Metric value="16–64GB" label="ram" />
+                <Metric value="3–4" label="màn hình" />
+                <Metric value="setup" label="tuỳ chọn" />
+              </div>
+            </div>
+          </aside>
         </section>
 
-        <section id="solutions" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <div className="rounded-[2rem] border border-white/10 bg-white/[0.045] p-6 backdrop-blur-xl lg:p-10">
-            <div className="mb-8 max-w-3xl">
-              <p className="text-sm font-black uppercase tracking-[0.25em] text-cyan-300">Giải pháp / dịch vụ</p>
-              <h2 className="mt-3 text-4xl font-black tracking-tight">Không trộn với sản phẩm — đây là phần setup thêm.</h2>
-              <p className="mt-4 text-slate-300">
-                Các workflow như screenshot-to-knowledge, OpenClaw/n8n setup hoặc trading desk được đặt thành dịch vụ đi kèm,
-                giúp khách hiểu: mua máy là một chuyện, triển khai để chạy được việc là một giá trị riêng.
+        <section id="mini-pc" className="border-y border-neutral-200 bg-neutral-50">
+          <div className="mx-auto max-w-6xl px-5 py-16">
+            <div className="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.28em] text-neutral-500">Hardware products</p>
+                <h2 className="mt-3 text-3xl font-semibold tracking-tight md:text-4xl">Sản phẩm mini PC</h2>
+              </div>
+              <p className="max-w-xl text-sm leading-6 text-neutral-600">
+                Giá là khung tham khảo để thử thị trường. Khi nhập lô thật cần chốt lại theo nguồn hàng, bảo hành, hệ điều hành và mức hỗ trợ.
               </p>
             </div>
-            <div className="grid gap-4 md:grid-cols-3">
-              {serviceSolutions.map((solution) => (
-                <article key={solution.title} className="rounded-[1.5rem] border border-white/10 bg-slate-950/50 p-6">
-                  <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">{solution.label}</p>
-                  <h3 className="mt-3 text-xl font-black">{solution.title}</h3>
-                  <p className="mt-3 min-h-24 text-sm leading-6 text-slate-300">{solution.text}</p>
-                  <a href={solution.link} className="mt-5 inline-flex items-center gap-2 text-sm font-black text-emerald-300 hover:text-emerald-200">
-                    Xem chi tiết <span className="material-symbols-outlined text-base">arrow_forward</span>
-                  </a>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              {miniPcProducts.map((product) => (
+                <article key={product.name} className={`border bg-white p-6 ${product.featured ? 'border-neutral-950' : 'border-neutral-200'}`}>
+                  <div className="mb-8 flex items-start justify-between gap-4">
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.24em] text-neutral-500">{product.role}</p>
+                      <h3 className="mt-3 text-2xl font-semibold tracking-tight">{product.name}</h3>
+                    </div>
+                    {product.featured ? <span className="rounded-full bg-neutral-950 px-3 py-1 text-xs font-semibold text-white">Đề xuất</span> : null}
+                  </div>
+
+                  <p className="text-3xl font-semibold tracking-tight">{product.price}</p>
+                  <p className="mt-4 text-sm leading-7 text-neutral-600">{product.fit}</p>
+
+                  <div className="mt-6 grid gap-2 sm:grid-cols-2">
+                    {product.specs.map((spec) => (
+                      <div key={spec} className="border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm text-neutral-700">
+                        {spec}
+                      </div>
+                    ))}
+                  </div>
                 </article>
               ))}
             </div>
           </div>
         </section>
+
+        <section id="services" className="mx-auto max-w-6xl px-5 py-16 md:py-20">
+          <div className="grid gap-12 md:grid-cols-[0.8fr_1.2fr]">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-neutral-500">Services</p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-tight md:text-4xl">Giải pháp dịch vụ đi kèm</h2>
+              <p className="mt-5 text-sm leading-7 text-neutral-600">
+                Phần này không còn nằm lẫn trong sản phẩm. Mini PC là hàng hoá; workflow, cài đặt và tư vấn vận hành là dịch vụ cộng thêm.
+              </p>
+            </div>
+            <div className="divide-y divide-neutral-200 border-y border-neutral-200">
+              {services.map((service) => (
+                <a key={service.title} href={service.link} className="group flex items-start gap-4 py-6">
+                  {service.title.includes('Screenshot') ? (
+                    <Monitor size={20} className="mt-1 shrink-0 text-neutral-950" />
+                  ) : service.title.includes('OpenClaw') ? (
+                    <Workflow size={20} className="mt-1 shrink-0 text-neutral-950" />
+                  ) : (
+                    <Server size={20} className="mt-1 shrink-0 text-neutral-950" />
+                  )}
+                  <div>
+                    <h3 className="text-xl font-semibold tracking-tight group-hover:underline">{service.title}</h3>
+                    <p className="mt-2 text-sm leading-7 text-neutral-600">{service.text}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-neutral-950 text-white">
+          <div className="mx-auto grid max-w-6xl gap-10 px-5 py-16 md:grid-cols-[1fr_1fr] md:items-center">
+            <div>
+              <CheckCircle2 size={30} />
+              <h2 className="mt-6 text-3xl font-semibold tracking-tight md:text-4xl">Vibe giữ lại</h2>
+            </div>
+            <div className="grid grid-cols-2 gap-px bg-neutral-800">
+              {['Tối giản', 'Rõ sản phẩm', 'Không nói quá', 'Dễ triển khai'].map((item) => (
+                <div key={item} className="bg-neutral-950 p-6 text-lg font-medium">{item}</div>
+              ))}
+            </div>
+          </div>
+        </section>
       </main>
+
+      <footer className="border-t border-neutral-200 px-5 py-10">
+        <div className="mx-auto flex max-w-6xl flex-col justify-between gap-6 text-sm text-neutral-500 md:flex-row md:items-center">
+          <p>© Haobi — Product Shelf by Hao & Bơ.</p>
+          <div className="flex gap-4">
+            <Link to="/" className="hover:text-black">Home</Link>
+            <Link to="/blog" className="hover:text-black">Blog</Link>
+            <a href="mailto:hello@haobi.io.vn" aria-label="Email" className="hover:text-black"><Mail size={18} /></a>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+function Metric({ value, label }: { value: string; label: string }) {
+  return (
+    <div>
+      <p className="text-2xl font-semibold tracking-tight">{value}</p>
+      <p className="mt-1 text-xs uppercase tracking-widest text-neutral-500">{label}</p>
     </div>
   );
 }

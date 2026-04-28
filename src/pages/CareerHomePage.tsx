@@ -41,7 +41,7 @@ export default function CareerHomePage() {
             <Link to="/story" className="hover:text-black">Câu chuyện</Link>
             <Link to="/lab" className="hover:text-black">Lab</Link>
             <Link to="/blog" className="hover:text-black">Blog</Link>
-            <Link to="/screenshot-to-knowledge" className="hover:text-black">Product</Link>
+            <Link to="/products" className="hover:text-black">Product</Link>
           </nav>
           <a href="mailto:hello@haobi.io.vn" className="rounded-full border border-neutral-900 px-4 py-2 text-sm font-medium hover:bg-neutral-950 hover:text-white">Liên hệ</a>
         </div>
