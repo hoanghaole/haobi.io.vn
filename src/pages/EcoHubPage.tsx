@@ -1,180 +1,209 @@
 import { Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabase';
+
+const hardwareProducts = [
+  {
+    id: 'n100-starter',
+    category: 'Mini PC',
+    tag: 'Starter',
+    title: 'Haobi Mini PC N100 Starter',
+    price: 'Dự kiến 4,9–6,9 triệu',
+    description:
+      'Máy nhỏ gọn cho OpenClaw cá nhân, n8n nhẹ, Telegram/Zalo automation và dashboard đơn giản chạy 24/7.',
+    specs: ['Intel N100', '16GB RAM', '512GB NVMe', '2 màn hình'],
+    cta: 'Xem gói OpenClaw',
+    link: '/openclaw-mini-pc',
+    icon: 'memory',
+  },
+  {
+    id: 'n305-pro',
+    category: 'Mini PC',
+    tag: 'Balanced',
+    title: 'Haobi Mini PC N305 Pro',
+    price: 'Dự kiến 7,9–9,9 triệu',
+    description:
+      'Cấu hình cân bằng cho người cần nhiều tab, nhiều workflow, OpenClaw + n8n + báo cáo định kỳ ổn định hơn.',
+    specs: ['Intel i3-N305', '32GB RAM', '1TB NVMe', '3 màn hình'],
+    cta: 'Tư vấn cấu hình',
+    link: 'mailto:hello@haobi.io.vn?subject=Tu%20van%20Haobi%20Mini%20PC%20N305',
+    icon: 'developer_board',
+  },
+  {
+    id: '7840hs-trading',
+    category: 'Trading Station',
+    tag: 'Khuyến nghị',
+    title: 'Haobi Trading Box 7840HS',
+    price: 'Dự kiến 12,9–16,9 triệu',
+    description:
+      'Mini PC mạnh cho trading đa màn, TradingView, app broker, Excel, trình duyệt nhiều tab và OpenClaw chạy nền.',
+    specs: ['Ryzen 7 7840HS', '32GB DDR5', '1TB NVMe', '3–4 màn hình'],
+    cta: 'Xem cấu hình đề xuất',
+    link: '/openclaw-mini-pc',
+    icon: 'monitoring',
+    highlighted: true,
+  },
+  {
+    id: '8845hs-ai-server',
+    category: 'AI Server',
+    tag: 'Premium',
+    title: 'Haobi AI Ops Box 8845HS',
+    price: 'Dự kiến 15,9–22,9 triệu',
+    description:
+      'Máy mini server cho nhiều agent, Docker nhẹ, workflow dữ liệu, backup nội bộ và vận hành AI automation nghiêm túc.',
+    specs: ['Ryzen 7 8845HS', '32–64GB RAM', '1–2TB NVMe', '2.5G LAN'],
+    cta: 'Đặt lịch pilot',
+    link: 'mailto:hello@haobi.io.vn?subject=Pilot%20Haobi%20AI%20Ops%20Box',
+    icon: 'hub',
+  },
+];
+
+const serviceSolutions = [
+  {
+    title: 'Screenshot-to-Knowledge OS',
+    text: 'Biến ảnh chụp màn hình thành note Obsidian có cấu trúc, có review queue và có thể tìm lại bằng hội thoại.',
+    link: '/screenshot-to-knowledge',
+    label: 'Office notes automation',
+  },
+  {
+    title: 'OpenClaw + n8n Setup',
+    text: 'Cài OpenClaw, n8n, Telegram bot, lịch báo cáo và workflow mẫu trên mini PC hoặc VPS riêng.',
+    link: '/openclaw-mini-pc',
+    label: 'AI automation service',
+  },
+  {
+    title: 'Trading Workflow Desk',
+    text: 'Bố trí máy, màn hình, browser profile, app trading, cảnh báo tin tức và checklist vận hành cho trader cá nhân.',
+    link: 'mailto:hello@haobi.io.vn?subject=Trading%20Workflow%20Desk',
+    label: 'Trading ops service',
+  },
+];
 
 export default function EcoHubPage() {
-    const [products, setProducts] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
+  return (
+    <div className="min-h-screen bg-slate-950 text-white antialiased">
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute left-[-10rem] top-[-10rem] h-96 w-96 rounded-full bg-blue-500/20 blur-3xl" />
+        <div className="absolute right-[-12rem] top-32 h-[30rem] w-[30rem] rounded-full bg-emerald-400/15 blur-3xl" />
+        <div className="absolute bottom-[-12rem] left-1/2 h-[28rem] w-[28rem] -translate-x-1/2 rounded-full bg-violet-500/10 blur-3xl" />
+      </div>
 
-    useEffect(() => {
-        async function loadProducts() {
-            try {
-                const { data: productsData, error: productsError } = await supabase
-                    .from('products')
-                    .select('*')
-                    .order('order', { ascending: true });
-
-                if (productsError) throw productsError;
-                if (productsData) {
-                    setProducts(productsData);
-                }
-            } catch (err) {
-                console.error("Error fetching products from Supabase:", err);
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        loadProducts();
-    }, []);
-
-    return (
-        <div className="bg-white text-slate-900 antialiased">
-
-            <div className="relative flex min-h-screen w-full flex-col group/design-root">
-                {/*  Header  */}
-                <header className="sticky top-0 z-50 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
-                    <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-                        <div className="flex items-center gap-2">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-eco-primary text-white">
-                                <span className="material-symbols-outlined text-xl">hub</span>
-                            </div>
-                            <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-white">Haobi Ecosystem</span>
-                        </div>
-                        <nav className="hidden md:flex items-center gap-8">
-                            <Link className="text-sm font-medium text-slate-600 hover:text-eco-primary dark:text-slate-300 dark:hover:text-eco-primary transition-colors" to="/">Trang chủ</Link>
-                            <a className="text-sm font-medium text-slate-600 hover:text-eco-primary dark:text-slate-300 dark:hover:text-eco-primary transition-colors" href="#">Tools</a>
-                            <a className="text-sm font-medium text-slate-600 hover:text-eco-primary dark:text-slate-300 dark:hover:text-eco-primary transition-colors" href="#">About</a>
-                            <a className="text-sm font-medium text-slate-600 hover:text-eco-primary dark:text-slate-300 dark:hover:text-eco-primary transition-colors" href="#">Contact</a>
-                        </nav>
-                        <div className="flex items-center gap-4">
-                            <button className="hidden sm:flex h-9 items-center justify-center rounded-lg bg-slate-100 px-4 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700">
-                                Log in
-                            </button>
-                            <button className="h-9 items-center justify-center rounded-lg bg-eco-primary px-4 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-eco-primary">
-                                Get Started
-                            </button>
-                        </div>
-                    </div>
-                </header>
-                <main className="flex-grow overflow-x-hidden">
-                    {/*  Hero Section  */}
-                    <section className="relative overflow-hidden py-16 sm:py-24 lg:py-32">
-                        <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-                            <h1 className="mx-auto max-w-4xl text-4xl font-black tracking-tight text-slate-900 dark:text-white sm:text-6xl">
-                                Explore the <span className="text-eco-primary">Haobi Ecosystem</span>
-                            </h1>
-                            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-600 dark:text-slate-400">
-                                Smart tools and applications designed to optimize your work, life, and personal growth. Build your perfect workflow with our suite of interconnected micro-products.
-                            </p>
-                            <div className="mt-10 flex items-center justify-center gap-x-6">
-                                <a className="rounded-full bg-eco-primary px-8 py-3.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-eco-primary transition-all" href="#products">
-                                    Browse Tools
-                                </a>
-                                <a className="text-sm font-semibold leading-6 text-slate-900 dark:text-white flex items-center gap-1 group" href="#">
-                                    Learn more <span className="material-symbols-outlined text-lg transition-transform group-hover:translate-x-1">arrow_forward</span>
-                                </a>
-                            </div>
-                        </div>
-                    </section>
-                    {/*  Products Grid Section  */}
-                    <section className="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8" id="products">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {loading ? (
-                                Array.from({ length: 6 }).map((_, i) => (
-                                    <div key={i} className="flex flex-col gap-4 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm transition-all animate-pulse h-full">
-                                        <div className="h-40 w-full rounded-xl bg-slate-200 dark:bg-slate-700 mb-2"></div>
-                                        <div className="flex gap-2">
-                                            <div className="h-5 w-16 bg-slate-200 dark:bg-slate-700 rounded text-[10px]"></div>
-                                            <div className="h-5 w-24 bg-slate-200 dark:bg-slate-700 rounded text-[10px]"></div>
-                                        </div>
-                                        <div className="h-6 w-3/4 bg-slate-200 dark:bg-slate-700 rounded mt-2"></div>
-                                        <div className="h-4 w-full bg-slate-200 dark:bg-slate-700 rounded"></div>
-                                        <div className="h-4 w-full bg-slate-200 dark:bg-slate-700 rounded"></div>
-                                        <div className="h-4 w-2/3 bg-slate-200 dark:bg-slate-700 rounded"></div>
-                                    </div>
-                                ))
-                            ) : products.length > 0 ? (
-                                products.map((product) => (
-                                    <div key={product.id} className="group relative flex flex-col gap-4 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-eco-primary/50 hover:shadow-lg transition-all h-full ring-1 ring-transparent hover:ring-eco-primary/20">
-                                        {/* Thumnail if image provided */}
-                                        <div className="h-48 w-full rounded-xl bg-slate-50 dark:bg-slate-900/50 overflow-hidden mb-2 relative">
-                                            {product.image ? (
-                                                <img src={product.image} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-slate-400 dark:text-slate-600 bg-slate-100 dark:bg-slate-800">
-                                                    <span className="material-symbols-outlined text-4xl opacity-50">image</span>
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        <div className="flex gap-2">
-                                            <span className="px-2.5 py-1 rounded-md text-[10px] font-bold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 uppercase tracking-wider">{product.category}</span>
-                                            {product.tag && <span className="px-2.5 py-1 rounded-md text-[10px] font-bold bg-eco-primary/10 text-eco-primary uppercase tracking-wider">{product.tag}</span>}
-                                        </div>
-
-                                        <h3 className="text-xl font-bold text-slate-900 dark:text-white leading-tight">{product.title}</h3>
-                                        <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm flex-1">
-                                            {product.description}
-                                        </p>
-
-                                        <a className="inline-flex items-center text-sm font-bold text-eco-primary hover:text-blue-600 mt-4 group/btn" href={product.link || "#"} target="_blank" rel="noopener noreferrer">
-                                            {product.cta || "Khám phá ngay"} <span className="material-symbols-outlined text-sm ml-1 transition-transform group-hover/btn:translate-x-1">arrow_forward</span>
-                                        </a>
-                                    </div>
-                                ))
-                            ) : (
-                                <div className="col-span-full flex flex-col items-center justify-center py-20 px-4 text-center border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-800">
-                                    <span className="material-symbols-outlined text-5xl text-slate-300 dark:text-slate-600 mb-4">apps</span>
-                                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Chưa có sản phẩm nào</h3>
-                                    <p className="text-slate-500 dark:text-slate-400 max-w-sm">Hệ thống đang cập nhật các giải pháp công nghệ và tự động hoá mới nhất. Xin vui lòng quay lại sau.</p>
-                                </div>
-                            )}
-                        </div>
-                    </section>
-                </main>
-                {/*  Footer  */}
-                <footer className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
-                    <div className="mx-auto max-w-7xl overflow-hidden px-6 py-12 lg:px-8">
-                        <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-                            <div className="flex items-center gap-2">
-                                <div className="flex h-6 w-6 items-center justify-center rounded bg-eco-primary text-white">
-                                    <span className="material-symbols-outlined text-sm">hub</span>
-                                </div>
-                                <p className="text-sm text-slate-500 dark:text-slate-400">
-                                    © 2024 Haobi Ecosystem. All rights reserved.
-                                </p>
-                            </div>
-                            <nav aria-label="Footer" className="-mb-6 columns-2 sm:flex sm:justify-center sm:space-x-12">
-                                <div className="pb-6">
-                                    <a className="text-sm leading-6 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white" href="#">Privacy Policy</a>
-                                </div>
-                                <div className="pb-6">
-                                    <a className="text-sm leading-6 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white" href="#">Terms of Service</a>
-                                </div>
-                                <div className="pb-6">
-                                    <a className="text-sm leading-6 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white" href="#">Support</a>
-                                </div>
-                            </nav>
-                            <div className="flex gap-4">
-                                <a className="text-slate-400 hover:text-slate-500" href="#">
-                                    <span className="sr-only">Twitter</span>
-                                    <svg aria-hidden="true" className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path>
-                                    </svg>
-                                </a>
-                                <a className="text-slate-400 hover:text-slate-500" href="#">
-                                    <span className="sr-only">GitHub</span>
-                                    <svg aria-hidden="true" className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                                        <path clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" fillRule="evenodd"></path>
-                                    </svg>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </footer>
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/80 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          <Link to="/" className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white text-slate-950">
+              <span className="material-symbols-outlined text-xl">storefront</span>
             </div>
-
+            <div>
+              <p className="text-sm font-black leading-none">Haobi Product Shelf</p>
+              <p className="text-xs text-slate-400">Mini PC · AI automation · Trading desk</p>
+            </div>
+          </Link>
+          <nav className="hidden items-center gap-8 text-sm text-slate-300 md:flex">
+            <a className="hover:text-white" href="#hardware">Sản phẩm</a>
+            <a className="hover:text-white" href="#solutions">Giải pháp</a>
+            <Link className="hover:text-white" to="/">Trang chủ</Link>
+          </nav>
+          <a href="mailto:hello@haobi.io.vn?subject=Tu%20van%20san%20pham%20Haobi" className="rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-950 transition hover:bg-emerald-200">
+            Hỏi cấu hình
+          </a>
         </div>
-    );
+      </header>
+
+      <main className="relative z-10">
+        <section className="mx-auto max-w-7xl px-4 py-20 text-center sm:px-6 lg:px-8 lg:py-28">
+          <p className="text-sm font-black uppercase tracking-[0.32em] text-emerald-300">Product first</p>
+          <h1 className="mx-auto mt-4 max-w-5xl text-5xl font-black tracking-tight sm:text-6xl lg:text-7xl">
+            Mini PC cài sẵn cho OpenClaw, trading và automation cá nhân.
+          </h1>
+          <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-slate-300">
+            Trang này tách rõ <b>sản phẩm phần cứng</b> và <b>giải pháp dịch vụ</b>: khách có thể mua máy trước,
+            rồi chọn thêm setup OpenClaw, n8n, screenshot workflow hoặc trading desk khi cần.
+          </p>
+          <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
+            <a href="#hardware" className="rounded-2xl bg-emerald-300 px-7 py-4 font-black text-slate-950 transition hover:bg-emerald-200">
+              Xem mini PC
+            </a>
+            <a href="#solutions" className="rounded-2xl border border-white/15 bg-white/5 px-7 py-4 font-bold text-white transition hover:bg-white/10">
+              Xem dịch vụ kèm theo
+            </a>
+          </div>
+        </section>
+
+        <section id="hardware" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="text-sm font-black uppercase tracking-[0.25em] text-emerald-300">Sản phẩm phần cứng</p>
+              <h2 className="mt-3 text-4xl font-black tracking-tight">Mini PC chọn lọc để bán thử</h2>
+            </div>
+            <p className="max-w-xl text-sm leading-6 text-slate-400">
+              Giá là khung dự kiến sau nhập hàng, kiểm tra, cài hệ điều hành cơ bản và bảo hành/pilot nội bộ. Chốt giá theo lô hàng thực tế.
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+            {hardwareProducts.map((product) => (
+              <article
+                key={product.id}
+                className={`group flex h-full flex-col rounded-[2rem] border p-6 transition ${
+                  product.highlighted
+                    ? 'border-emerald-300/50 bg-emerald-300/[0.08] shadow-2xl shadow-emerald-500/10'
+                    : 'border-white/10 bg-white/[0.045] hover:border-white/25'
+                }`}
+              >
+                <div className="mb-6 flex h-40 items-center justify-center overflow-hidden rounded-[1.5rem] border border-white/10 bg-slate-900/80">
+                  <div className="relative flex h-24 w-36 items-center justify-center rounded-3xl border border-white/15 bg-gradient-to-br from-slate-700 to-slate-950 shadow-2xl">
+                    <div className="absolute -top-3 h-3 w-24 rounded-t-xl bg-slate-700" />
+                    <span className="material-symbols-outlined text-4xl text-emerald-300">{product.icon}</span>
+                    <div className="absolute bottom-4 right-5 h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_16px_rgba(110,231,183,0.9)]" />
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <span className="rounded-full bg-white/10 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-slate-300">{product.category}</span>
+                  <span className="rounded-full bg-emerald-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-emerald-300">{product.tag}</span>
+                </div>
+                <h3 className="mt-4 text-2xl font-black leading-tight">{product.title}</h3>
+                <p className="mt-3 text-xl font-black text-emerald-200">{product.price}</p>
+                <p className="mt-4 flex-1 text-sm leading-6 text-slate-300">{product.description}</p>
+                <div className="mt-6 grid grid-cols-2 gap-2">
+                  {product.specs.map((spec) => (
+                    <div key={spec} className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-bold text-slate-200">
+                      {spec}
+                    </div>
+                  ))}
+                </div>
+                <a href={product.link} className="mt-6 inline-flex items-center justify-between rounded-2xl bg-white px-4 py-3 text-sm font-black text-slate-950 transition group-hover:bg-emerald-200">
+                  {product.cta}
+                  <span className="material-symbols-outlined text-base">arrow_forward</span>
+                </a>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="solutions" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+          <div className="rounded-[2rem] border border-white/10 bg-white/[0.045] p-6 backdrop-blur-xl lg:p-10">
+            <div className="mb-8 max-w-3xl">
+              <p className="text-sm font-black uppercase tracking-[0.25em] text-cyan-300">Giải pháp / dịch vụ</p>
+              <h2 className="mt-3 text-4xl font-black tracking-tight">Không trộn với sản phẩm — đây là phần setup thêm.</h2>
+              <p className="mt-4 text-slate-300">
+                Các workflow như screenshot-to-knowledge, OpenClaw/n8n setup hoặc trading desk được đặt thành dịch vụ đi kèm,
+                giúp khách hiểu: mua máy là một chuyện, triển khai để chạy được việc là một giá trị riêng.
+              </p>
+            </div>
+            <div className="grid gap-4 md:grid-cols-3">
+              {serviceSolutions.map((solution) => (
+                <article key={solution.title} className="rounded-[1.5rem] border border-white/10 bg-slate-950/50 p-6">
+                  <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">{solution.label}</p>
+                  <h3 className="mt-3 text-xl font-black">{solution.title}</h3>
+                  <p className="mt-3 min-h-24 text-sm leading-6 text-slate-300">{solution.text}</p>
+                  <a href={solution.link} className="mt-5 inline-flex items-center gap-2 text-sm font-black text-emerald-300 hover:text-emerald-200">
+                    Xem chi tiết <span className="material-symbols-outlined text-base">arrow_forward</span>
+                  </a>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  );
 }

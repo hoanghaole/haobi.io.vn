@@ -5,6 +5,8 @@ import CareerLabPage from './pages/CareerLabPage';
 import CareerBlogPage from './pages/CareerBlogPage';
 import CareerBlogPostPage from './pages/CareerBlogPostPage';
 import ScreenshotKnowledgePage from './pages/ScreenshotKnowledgePage';
+import OpenClawMiniPcPage from './pages/OpenClawMiniPcPage';
+import EcoHubPage from './pages/EcoHubPage';
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
         <Route path="/blog" element={<CareerBlogPage />} />
         <Route path="/blog/:slug" element={<CareerBlogPostPage />} />
         <Route path="/screenshot-to-knowledge" element={<ScreenshotKnowledgePage />} />
+        <Route path="/openclaw-mini-pc" element={<OpenClawMiniPcPage />} />
+        <Route path="/products" element={<EcoHubPage />} />
         <Route path="*" element={<CareerHomePage />} />
       </Routes>
     </BrowserRouter>
