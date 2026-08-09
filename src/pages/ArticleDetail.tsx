@@ -4,13 +4,14 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import type { WebsiteBlogPost } from '../types/content';
 
 export default function ArticleDetail() {
   const { menuItems, loading: menuLoading } = useMenuItems();
   const { slug } = useParams();
   const navigate = useNavigate();
-  const [article, setArticle] = useState<any>(null);
-  const [related, setRelated] = useState<any[]>([]);
+  const [article, setArticle] = useState<WebsiteBlogPost | null>(null);
+  const [related, setRelated] = useState<WebsiteBlogPost[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,16 +27,17 @@ export default function ArticleDetail() {
         if (error) throw error;
 
         if (data) {
-          setArticle(data);
+          const typedArticle = data as WebsiteBlogPost;
+          setArticle(typedArticle);
 
           // Fetch related articles
           const { data: relatedData } = await supabase
             .from('websiteblog')
             .select('*')
-            .neq('id', data.id)
+            .neq('id', typedArticle.id)
             .limit(3);
 
-          if (relatedData) setRelated(relatedData);
+          if (relatedData) setRelated(relatedData as WebsiteBlogPost[]);
         } else {
           navigate('/blog');
         }
@@ -140,7 +142,7 @@ export default function ArticleDetail() {
           {/*  Featured Image  */}
           {(article?.image || article?.image_hero || article?.image_content) && (
             <figure className="mb-12 rounded-xl overflow-hidden shadow-sm">
-              <img alt={article?.title} className="w-full h-auto max-h-[60vh] object-cover" src={article?.image || article?.image_hero || article?.image_content} />
+              <img alt={article.title} className="w-full h-auto max-h-[60vh] object-cover" src={article.image || article.image_hero || article.image_content || undefined} />
             </figure>
           )}
           {/*  Content Body  */}

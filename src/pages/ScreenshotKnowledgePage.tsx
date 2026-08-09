@@ -1,5 +1,6 @@
 import { ArrowRight, Bot, Camera, CheckCircle2, Database, FolderSync, MessageCircle, Network, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import SiteHeader from '../components/SiteHeader';
 
 const flow = [
   { icon: Camera, title: 'Chụp màn hình', text: 'Người dùng vẫn giữ thói quen cũ: chụp màn hình chat, slide, lỗi phần mềm, dashboard hoặc bài viết hay.' },
@@ -27,17 +28,7 @@ const principles = [
 export default function ScreenshotKnowledgePage() {
   return (
     <div className="min-h-screen bg-white text-neutral-950">
-      <header className="sticky top-0 z-50 border-b border-neutral-200 bg-white/90 backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
-          <Link to="/" className="text-sm font-semibold uppercase tracking-[0.28em]">Haobi</Link>
-          <nav className="hidden items-center gap-8 text-sm text-neutral-600 md:flex">
-            <a href="#flow" className="hover:text-black">Flow</a>
-            <a href="#use-cases" className="hover:text-black">Use cases</a>
-            <a href="#mvp" className="hover:text-black">MVP</a>
-            <Link to="/blog" className="hover:text-black">Blog</Link>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader sectionLinks={[{ href: '#flow', label: 'Flow' }, { href: '#use-cases', label: 'Use cases' }, { href: '#mvp', label: 'MVP' }]} />
 
       <main>
         <section className="mx-auto grid max-w-6xl gap-12 px-5 py-20 md:grid-cols-[1.05fr_0.95fr] md:py-28">

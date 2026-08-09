@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react';
 import { useMenuItems } from '../hooks/useMenuItems';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import type { WebsiteBlogPost } from '../types/content';
 
 export default function BlogHomePage() {
   const { menuItems, loading: menuLoading } = useMenuItems();
-  const [posts, setPosts] = useState<any[]>([]);
-  const [featuredPost, setFeaturedPost] = useState<any>(null);
+  const [posts, setPosts] = useState<WebsiteBlogPost[]>([]);
+  const [featuredPost, setFeaturedPost] = useState<WebsiteBlogPost | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,8 +22,9 @@ export default function BlogHomePage() {
 
         if (data && data.length > 0) {
           // Assume the first one is the featured post
-          setFeaturedPost(data[0]);
-          setPosts(data.slice(1));
+          const typedPosts = data as WebsiteBlogPost[];
+          setFeaturedPost(typedPosts[0]);
+          setPosts(typedPosts.slice(1));
         }
       } catch (err) {
         console.error("Error fetching blog posts", err);

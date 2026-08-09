@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
-import { ArrowLeft, ExternalLink } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
+import SiteHeader from '../components/SiteHeader';
 
 const experiments = [
   {
@@ -27,12 +27,7 @@ const experiments = [
 export default function CareerLabPage() {
   return (
     <div className="min-h-screen bg-neutral-950 text-white">
-      <header className="border-b border-neutral-800">
-        <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-5">
-          <Link to="/" className="inline-flex items-center gap-2 text-sm text-neutral-400 hover:text-white"><ArrowLeft size={16} /> Trang chủ</Link>
-          <Link to="/story" className="text-sm font-medium text-neutral-400 hover:text-white">Câu chuyện</Link>
-        </div>
-      </header>
+      <SiteHeader variant="dark" maxWidthClass="max-w-5xl" />
 
       <main className="mx-auto max-w-5xl px-5 py-16 md:py-24">
         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-neutral-500">Career lab</p>

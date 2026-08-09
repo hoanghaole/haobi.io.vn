@@ -1,5 +1,6 @@
 import { ArrowRight, CheckCircle2, Cpu, Mail, Monitor, Server, Workflow } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import SiteHeader from '../components/SiteHeader';
 
 const miniPcProducts = [
   {
@@ -54,18 +55,7 @@ const services = [
 export default function EcoHubPage() {
   return (
     <div className="min-h-screen bg-white text-neutral-950">
-      <header className="sticky top-0 z-50 border-b border-neutral-200 bg-white/90 backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
-          <Link to="/" className="text-sm font-semibold uppercase tracking-[0.28em]">Haobi</Link>
-          <nav className="hidden items-center gap-8 text-sm text-neutral-600 md:flex">
-            <Link to="/" className="hover:text-black">Trang chủ</Link>
-            <a href="#mini-pc" className="hover:text-black">Mini PC</a>
-            <a href="#services" className="hover:text-black">Dịch vụ</a>
-            <Link to="/blog" className="hover:text-black">Blog</Link>
-          </nav>
-          <a href="mailto:hello@haobi.io.vn" className="rounded-full border border-neutral-900 px-4 py-2 text-sm font-medium hover:bg-neutral-950 hover:text-white">Liên hệ</a>
-        </div>
-      </header>
+      <SiteHeader sectionLinks={[{ href: '#mini-pc', label: 'Mini PC' }, { href: '#services', label: 'Dịch vụ' }]} />
 
       <main>
         <section className="mx-auto grid max-w-6xl gap-12 px-5 py-20 md:grid-cols-[1.05fr_0.95fr] md:py-28">

@@ -9,11 +9,13 @@ import {
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Link } from 'react-router-dom';
+import type { MenuItem } from '../hooks/useMenuItems';
+import type { ProductSummary, WebsiteHero } from '../types/content';
 
 export default function WebsiteView() {
-    const [hero, setHero] = useState<any>(null);
-    const [products, setProducts] = useState<any[]>([]);
-    const [menuItems, setMenuItems] = useState<any[]>([]);
+    const [hero, setHero] = useState<WebsiteHero | null>(null);
+    const [products, setProducts] = useState<ProductSummary[]>([]);
+    const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -40,7 +42,7 @@ export default function WebsiteView() {
 
                 if (productsError) throw productsError;
                 if (productsData) {
-                    setProducts(productsData);
+                    setProducts(productsData as ProductSummary[]);
                 }
 
                 // Lấy Menu Items chính (is_active = true, parent_id IS NULL)
@@ -53,7 +55,7 @@ export default function WebsiteView() {
 
                 if (menuError) throw menuError;
                 if (menuData) {
-                    setMenuItems(menuData);
+                    setMenuItems(menuData as MenuItem[]);
                 }
             } catch (err) {
                 console.error("Error fetching data from Supabase:", err);
@@ -203,7 +205,7 @@ export default function WebsiteView() {
                                         {/* Thumnail if image provided */}
                                         <div className="h-40 w-full rounded-lg bg-blue-50 overflow-hidden mb-2">
                                             {product.image ? (
-                                                <img src={product.image} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                                <img src={product.image} alt={product.title || product.name || 'Haobi product'} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center text-primary bg-primary/10">
                                                     <ImageIcon size={32} />
