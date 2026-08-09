@@ -1,4 +1,3 @@
 User-agent: *
 Allow: /
-
-Sitemap: https://1.haobi.io.vn/sitemap.xml
+Sitemap: https://haobi.io.vn/sitemap.xml

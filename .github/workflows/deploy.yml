@@ -45,5 +45,5 @@ jobs:
           protocol: ftps
           local-dir: ./dist/
           server-dir: ./
-          dangerous-clean-slate: false
+          dangerous-clean-slate: true
           dry-run: false
