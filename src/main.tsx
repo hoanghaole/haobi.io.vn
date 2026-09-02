@@ -43,6 +43,7 @@ const packages = [
 
 const proof = ['OpenClaw agent workspace', 'Power BI narrative report', 'n8n workflow automation', 'Obsidian knowledge base', 'AI content workflow', 'Human approval flow'];
 const loop = ['OpenClaw', 'Power BI', 'n8n', 'AI Employee', 'Human Approval', 'Second Brain'];
+const verbs = ['đọc dữ liệu', 'tạo báo cáo', 'soạn follow-up', 'xin duyệt', 'ghi log'];
 
 function Scramble({ text }: { text: string }) {
   const reduce = useReducedMotion();
@@ -64,13 +65,15 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 function App() {
   const reduce = useReducedMotion();
   const [active, setActive] = useState(personas[0]);
+  const [verb, setVerb] = useState(0);
+  useEffect(() => { if (reduce) return; const id = setInterval(() => setVerb(v => (v + 1) % verbs.length), 1700); return () => clearInterval(id); }, [reduce]);
   return <div className="site">
     <header className="nav"><a className="brand" href="#top">HaoBi</a><nav><a href="#how">Cách hoạt động</a><a href="#use-cases">Use cases</a><a href="#services">Dịch vụ</a><a className="nav-cta" href="mailto:lienhe@haobi.io.vn?subject=Tu van HaoBi">Tư vấn</a></nav></header>
     <main id="top">
-      <section className="hero section">
+      <section className="hero section"><motion.div className="scrollbar" style={{ scaleX: 1 }} />
         <div>
           <Reveal><p className="eyebrow"><Scramble text="PRIVATE AI OPERATING SYSTEM" /></p></Reveal>
-          <Reveal delay={.05}><h1>Một hệ thống AI riêng cho công việc thật.</h1></Reveal>
+          <Reveal delay={.05}><h1>Một hệ thống AI riêng <span className="swap"><motion.span key={verb} initial={{y:26,opacity:0,filter:'blur(8px)'}} animate={{y:0,opacity:1,filter:'blur(0)'}} exit={{y:-20,opacity:0}}>{verbs[verb]}</motion.span></span> cho công việc thật.</h1></Reveal>
           <Reveal delay={.1}><p className="lead">HaoBi giúp cá nhân và doanh nghiệp nhỏ triển khai OpenClaw, Power BI và automation thành một đội AI nhỏ: biết đọc dữ liệu, tạo báo cáo, theo dõi việc lặp lại và chờ bạn phê duyệt trước khi hành động.</p></Reveal><Reveal delay={.14}><div className="stats"><strong><Count to={1} /></strong><span>workspace riêng</span><strong><Count to={5} /></strong><span>lớp workflow</span><strong><Count to={100} suffix="%" /></strong><span>human approval</span></div></Reveal>
           <Reveal delay={.15}><div className="actions"><a className="button" href="mailto:lienhe@haobi.io.vn?subject=Tu van trien khai HaoBi">Tư vấn triển khai</a><a className="link" href="#how">Xem cách hoạt động</a></div><p className="trust">Private by design · Human approval · Built for real workflows</p></Reveal>
         </div>
@@ -91,7 +94,7 @@ function App() {
 
       <section className="section safety"><Reveal><p className="eyebrow">SAFETY & CONTROL</p><h2>AI làm việc trong giới hạn bạn đặt.</h2><p className="lead small">Mục tiêu không phải để AI thay bạn. Mục tiêu là để AI làm phần lặp lại, còn quyết định vẫn nằm trong tay bạn.</p></Reveal><div className="badges">{['Approval ON','Logs','Permissions','Backup','Local / Private'].map(x=><span key={x}>{x}</span>)}</div></section>
 
-      <section className="section"><Reveal><p className="eyebrow">PROOF</p><h2>Xây từ công việc thật, không phải demo sân khấu.</h2></Reveal><div className="proof-grid">{proof.map(x=><Reveal key={x}><span>{x}</span></Reveal>)}</div></section>
+      <section className="section proof-section"><Reveal><p className="eyebrow">PROOF</p><h2>Xây từ công việc thật, không phải demo sân khấu.</h2></Reveal><div className="terminal"><span>hao@bi</span><code>observe → draft → ask approval → act → log</code></div><div className="proof-grid">{proof.map(x=><Reveal key={x}><span>{x}</span></Reveal>)}</div></section>
 
       <section className="final section"><Reveal><h2>Muốn có một đội AI riêng cho công việc của bạn?</h2><p>Bắt đầu bằng một buổi audit nhỏ. Chỉ cần chọn một việc đang lặp lại và biến nó thành workflow đầu tiên.</p><a className="button" href="mailto:lienhe@haobi.io.vn?subject=Audit nho voi HaoBi">Tư vấn với HaoBi</a></Reveal></section>
     </main>
