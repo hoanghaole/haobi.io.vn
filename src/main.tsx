@@ -1,65 +1,87 @@
-import { StrictMode, useEffect, useMemo, useState } from 'react';
+import { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { motion, useReducedMotion } from 'motion/react';
 import './index.css';
 
-type Card = { n: string; title: string; body: string };
+type Card = { title: string; body: string; fix?: string };
+type Persona = { id: string; label: string; pain: string; does: string[]; cta: string };
 
-const cards: Card[] = [
-  { n: '01', title: 'AI Box', body: 'OpenClaw cài sẵn trên máy riêng. Cắm điện, kết nối, bắt đầu làm việc.' },
-  { n: '02', title: 'AI Employee', body: 'Một agent cho một vai trò thật: báo cáo, follow-up, nội dung, vận hành.' },
-  { n: '03', title: 'Automation', body: 'n8n, Sheets, Power BI, email và dữ liệu chạy thành workflow có kiểm soát.' },
-  { n: '04', title: 'Training', body: 'Workshop thực chiến để đội ngũ dùng AI như công cụ làm việc, không chỉ demo.' },
+const pains: Card[] = [
+  { title: 'AI rời rạc', body: 'ChatGPT, Claude, Gemini… mỗi thứ một nơi. Không có quy trình chung, không nhớ bối cảnh dài hạn.', fix: 'Gom vào một workspace có agent, skill, memory và approval.' },
+  { title: 'Dữ liệu nằm im', body: 'Excel, Google Sheet, Power BI, file nội bộ có nhiều thông tin nhưng không tự biến thành hành động.', fix: 'Kết nối dữ liệu với workflow và báo cáo dễ hiểu.' },
+  { title: 'Việc lặp ăn thời gian', body: 'Báo cáo, tổng hợp, follow-up, nhắc việc, soạn nội dung — ngày nào cũng lặp.', fix: 'Biến việc lặp thành agent hoặc automation có giám sát.' },
+  { title: 'Sợ AI làm sai', body: 'Không rõ AI được quyền làm gì, khi nào cần hỏi, ai chịu trách nhiệm.', fix: 'Thiết kế quyền hạn, log và human approval từ đầu.' },
 ];
 
-const services = ['Cài OpenClaw riêng', 'Thiết kế agent theo vai trò', 'Kết nối dữ liệu doanh nghiệp', 'Làm dashboard Power BI', 'Tự động hóa quy trình', 'Managed AI hằng tháng'];
-const orbit = ['Research', 'Report', 'Follow-up', 'Content', 'Dashboard', 'Approve'];
-const words = ['AI Box', 'Agent', 'Workflow', 'Dashboard'];
+const layers = [
+  ['AI Workspace', 'OpenClaw, agent, skill, memory, channel, approval'],
+  ['Business Data', 'Power BI, Sheets, files, CRM, internal docs'],
+  ['Automation', 'n8n, email, calendar, report, notification'],
+];
 
-function FadeIn({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+const timeline = [
+  ['08:00', 'Morning brief', 'AI đọc lịch, việc tồn, email quan trọng và tóm tắt hôm nay cần chú ý gì.'],
+  ['10:00', 'Data check', 'Agent kiểm tra số liệu, phát hiện điểm bất thường và gợi ý câu hỏi cần xem.'],
+  ['14:00', 'Report explained', 'Power BI không chỉ hiện dashboard. HaoBi giải thích biến động và việc cần làm tiếp.'],
+  ['16:00', 'Follow-up draft', 'AI soạn email hoặc tin nhắn follow-up, nhưng dừng lại chờ bạn duyệt.'],
+  ['18:00', 'Daily memory', 'Hệ thống ghi lại việc đã làm, việc còn tồn và đề xuất ưu tiên cho ngày mai.'],
+];
+
+const personas: Persona[] = [
+  { id: 'owner', label: 'Chủ DN', pain: 'Muốn nắm tình hình nhưng không muốn đọc từng file, từng group, từng báo cáo.', does: ['daily brief', 'sales snapshot', 'issue alert', 'follow-up draft'], cta: 'Xây dashboard điều hành AI' },
+  { id: 'manager', label: 'Manager', pain: 'Việc nhiều, follow-up nhiều, báo cáo nhiều.', does: ['nhắc việc tồn', 'tổng hợp tiến độ', 'soạn update', 'phát hiện bottleneck'], cta: 'Tạo agent quản lý công việc' },
+  { id: 'bi', label: 'Data / BI', pain: 'Dashboard có nhưng người xem vẫn hỏi “vậy nghĩa là gì?”', does: ['giải thích biến động', 'gợi ý câu hỏi phân tích', 'tạo narrative report', 'cảnh báo bất thường'], cta: 'Kết nối Power BI với AI' },
+  { id: 'sales', label: 'Marketing / Sales', pain: 'Cần nội dung, follow-up, chăm lead liên tục.', does: ['draft content', 'draft email', 'phân loại lead', 'nhắc follow-up'], cta: 'Xây AI sales assistant' },
+  { id: 'ops', label: 'Operations', pain: 'Quy trình lặp, dễ sót, nhiều bước thủ công.', does: ['checklist tự động', 'notification', 'approval flow', 'log vận hành'], cta: 'Tự động hóa quy trình đầu tiên' },
+];
+
+const packages = [
+  ['Setup AI Workspace', 'Cài hệ thống AI riêng để bắt đầu làm việc thật.', 'OpenClaw setup · model/API/channel · agent cơ bản · approval · backup/recovery'],
+  ['Build AI Employee', 'Thiết kế một agent cho một vai trò cụ thể.', 'phân tích công việc · quyền hạn · dữ liệu · skill/workflow · test case thật'],
+  ['Managed AI System', 'HaoBi theo dõi, cập nhật và cải tiến hệ thống AI hằng tháng.', 'monitoring · update workflow · backup check · support lỗi · cải tiến định kỳ'],
+];
+
+const proof = ['OpenClaw agent workspace', 'Power BI narrative report', 'n8n workflow automation', 'Obsidian knowledge base', 'AI content workflow', 'Human approval flow'];
+
+function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   const reduce = useReducedMotion();
-  return <motion.div initial={reduce ? { opacity: 0 } : { opacity: 0, y: 18 }} whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.25 }} transition={{ duration: 0.55, delay, ease: 'easeOut' }}>{children}</motion.div>;
-}
-
-function RotatingWord() {
-  const [i, setI] = useState(0);
-  useEffect(() => { const id = setInterval(() => setI((v) => (v + 1) % words.length), 1800); return () => clearInterval(id); }, []);
-  return <motion.span key={words[i]} className="rotating" initial={{ y: 18, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.35 }}>{words[i]}</motion.span>;
-}
-
-function DecryptedText({ text }: { text: string }) {
-  const reduce = useReducedMotion();
-  const chars = useMemo(() => text.split(''), [text]);
-  return <span className="decrypt" aria-label={text}>{chars.map((char, i) => <motion.span aria-hidden="true" key={`${char}-${i}`} initial={{ opacity: 0, filter: 'blur(8px)' }} animate={{ opacity: 1, filter: 'blur(0px)' }} transition={{ delay: reduce ? 0 : i * 0.025, duration: 0.35 }}>{char}</motion.span>)}</span>;
+  return <motion.div initial={{ opacity: 0, y: reduce ? 0 : 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.18 }} transition={{ duration: .55, delay, ease: 'easeOut' }}>{children}</motion.div>;
 }
 
 function App() {
   const reduce = useReducedMotion();
-  return (
-    <div className="shell">
-      <div className="aurora" aria-hidden="true" />
-      <header className="nav"><a className="brand" href="#top">HaoBi</a><nav aria-label="Điều hướng"><a href="#services">Dịch vụ</a><a href="#why">Vì sao ở lại</a><a href="#process">Quy trình</a><a href="mailto:lienhe@haobi.io.vn">Liên hệ</a></nav></header>
-      <main id="top">
-        <section className="hero">
-          <div className="hero-copy">
-            <FadeIn><p className="eyebrow"><DecryptedText text="AI → BI · DATA · AUTOMATION" /></p></FadeIn>
-            <FadeIn delay={0.08}><h1>Một người.<br /><span>Một đội AI.</span></h1></FadeIn>
-            <FadeIn delay={0.16}><p className="lead">HaoBi biến OpenClaw, Power BI và automation thành hệ thống AI riêng: <RotatingWord /> làm việc quanh Ba.</p></FadeIn>
-            <FadeIn delay={0.24}><div className="actions"><a className="button" href="mailto:lienhe@haobi.io.vn?subject=Triển khai HaoBi">Bắt đầu tư vấn</a><a className="ghost" href="#services">Xem dịch vụ</a></div></FadeIn>
-          </div>
-          <motion.div className="orb-card" initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.96, rotate: -2 }} animate={reduce ? { opacity: 1 } : { opacity: 1, scale: 1, rotate: 0 }} transition={{ duration: 0.8, ease: 'easeOut' }} aria-label="HaoBi operating system visual">
-            <div className="grid-glow" /><motion.div className="orb" animate={reduce ? {} : { y: [0, -12, 0], rotate: [0, 3, 0] }} transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }} />
-            {orbit.map((x, i) => <motion.span className="chip" key={x} style={{ '--a': `${i * 60}deg` } as React.CSSProperties} animate={reduce ? {} : { rotate: 360 }} transition={{ duration: 28, repeat: Infinity, ease: 'linear' }}>{x}</motion.span>)}
-            <div className="metric top"><span>Agents</span><strong>06</strong></div><div className="metric mid"><span>Workflows</span><strong>24/7</strong></div><div className="metric bot"><span>Human approval</span><strong>ON</strong></div>
-          </motion.div>
-        </section>
-        <section id="services" className="section"><FadeIn><p className="eyebrow">REACT BITS · CHROMA GRID</p></FadeIn><div className="card-grid">{cards.map((card, i) => <FadeIn key={card.n} delay={i * 0.05}><motion.article className="card" whileHover={reduce ? {} : { y: -10, rotateX: 3 }} transition={{ type: 'spring', stiffness: 260, damping: 22 }}><span>{card.n}</span><h2>{card.title}</h2><p>{card.body}</p></motion.article></FadeIn>)}</div></section>
-        <section id="why" className="sticky section"><FadeIn><p className="eyebrow">SCROLL REVEAL · GIỮ NGƯỜI XEM</p></FadeIn><motion.h2 className="mega" initial={{ opacity: 0.25 }} whileInView={{ opacity: 1 }} viewport={{ amount: 0.5 }}>Mỗi cuộn chuột mở thêm một lớp: vấn đề, hệ thống, kết quả.</motion.h2><div className="marquee" aria-hidden="true"><span>OpenClaw · Power BI · n8n · AI Employee · Dashboard · Workflow · </span><span>OpenClaw · Power BI · n8n · AI Employee · Dashboard · Workflow · </span></div></section>
-        <section id="process" className="split section"><FadeIn><div><p className="eyebrow">BORING PROCESS, REAL OUTCOME</p><h2 className="section-title">Không bán chatbot. Bán hệ thống làm việc.</h2></div></FadeIn><div className="service-list">{services.map((item, i) => <FadeIn key={item} delay={i * 0.04}><motion.div className="service" whileHover={reduce ? {} : { x: 8 }}><span>{String(i + 1).padStart(2, '0')}</span>{item}</motion.div></FadeIn>)}</div></section>
-      </main>
-      <footer><span>© {new Date().getFullYear()} HaoBi</span><span>OpenClaw · Power BI · n8n</span><a href="mailto:lienhe@haobi.io.vn">lienhe@haobi.io.vn</a></footer>
-    </div>
-  );
+  const [active, setActive] = useState(personas[0]);
+  return <div className="site">
+    <header className="nav"><a className="brand" href="#top">HaoBi</a><nav><a href="#how">Cách hoạt động</a><a href="#use-cases">Use cases</a><a href="#services">Dịch vụ</a><a className="nav-cta" href="mailto:lienhe@haobi.io.vn?subject=Tu van HaoBi">Tư vấn</a></nav></header>
+    <main id="top">
+      <section className="hero section">
+        <div>
+          <Reveal><p className="eyebrow">PRIVATE AI OPERATING SYSTEM</p></Reveal>
+          <Reveal delay={.05}><h1>Một hệ thống AI riêng cho công việc thật.</h1></Reveal>
+          <Reveal delay={.1}><p className="lead">HaoBi giúp cá nhân và doanh nghiệp nhỏ triển khai OpenClaw, Power BI và automation thành một đội AI nhỏ: biết đọc dữ liệu, tạo báo cáo, theo dõi việc lặp lại và chờ bạn phê duyệt trước khi hành động.</p></Reveal>
+          <Reveal delay={.15}><div className="actions"><a className="button" href="mailto:lienhe@haobi.io.vn?subject=Tu van trien khai HaoBi">Tư vấn triển khai</a><a className="link" href="#how">Xem cách hoạt động</a></div><p className="trust">Private by design · Human approval · Built for real workflows</p></Reveal>
+        </div>
+        <Reveal delay={.12}><div className="map" aria-label="Workflow map"><div className="you">You</div>{['Data','Agent','Report','Approval','Automation'].map((x,i)=><motion.div key={x} className={`node n${i}`} whileHover={reduce ? {} : { y: -4 }}>{x}</motion.div>)}<svg viewBox="0 0 420 420"><path d="M210 210 L90 110 M210 210 L330 110 M210 210 L90 315 M210 210 L330 315 M210 210 L210 60"/></svg></div></Reveal>
+      </section>
+
+      <section className="section"><Reveal><p className="eyebrow">PAIN MIRROR</p><h2>Bạn không thiếu AI. Bạn thiếu một hệ thống làm việc được.</h2></Reveal><div className="grid four">{pains.map((p,i)=><Reveal key={p.title} delay={i*.04}><motion.article className="card glow" whileHover={reduce ? {} : { y: -6 }}><h3>{p.title}</h3><p>{p.body}</p><small>{p.fix}</small></motion.article></Reveal>)}</div></section>
+
+      <section id="how" className="section system"><Reveal><p className="eyebrow">SYSTEM MAP</p><h2>HaoBi kết nối 3 lớp thành một hệ điều hành công việc.</h2></Reveal><div className="layers">{layers.map(([title,body],i)=><Reveal key={title} delay={i*.06}><article className="layer"><span>0{i+1}</span><h3>{title}</h3><p>{body}</p></article></Reveal>)}</div><Reveal><div className="pipeline">Observe <span/> Draft <span/> Approve <span/> Act <span/> Log</div></Reveal></section>
+
+      <section className="section day"><Reveal><p className="eyebrow">DAY IN LIFE</p><h2>Một ngày làm việc với HaoBi</h2></Reveal><div className="timeline">{timeline.map(([time,title,body],i)=><Reveal key={time} delay={i*.04}><article><time>{time}</time><div><h3>{title}</h3><p>{body}</p><a href="mailto:lienhe@haobi.io.vn?subject=Toi muon workflow nay">Tôi muốn workflow này</a></div></article></Reveal>)}</div></section>
+
+      <section id="use-cases" className="section persona"><Reveal><p className="eyebrow">USE CASE SELECTOR</p><h2>Bạn muốn đội AI làm gì trước?</h2></Reveal><div className="tabs" role="tablist">{personas.map((p)=><button key={p.id} onClick={()=>setActive(p)} className={active.id===p.id?'on':''}>{p.label}{active.id===p.id&&<motion.span layoutId="tab"/>}</button>)}</div><motion.article key={active.id} className="persona-card" initial={{opacity:0,y:10}} animate={{opacity:1,y:0}}><p>{active.pain}</p><ul>{active.does.map(x=><li key={x}>{x}</li>)}</ul><a className="button" href={`mailto:lienhe@haobi.io.vn?subject=${encodeURIComponent(active.cta)}`}>{active.cta}</a></motion.article></section>
+
+      <section id="services" className="section"><Reveal><p className="eyebrow">SERVICES</p><h2>Bắt đầu nhỏ. Mở rộng khi có kết quả.</h2></Reveal><div className="grid three">{packages.map(([title,body,items],i)=><Reveal key={title} delay={i*.05}><article className="card package"><h3>{title}</h3><p>{body}</p><small>{items}</small><a href="mailto:lienhe@haobi.io.vn?subject=Hoi goi HaoBi">Trao đổi gói này</a></article></Reveal>)}</div></section>
+
+      <section className="section safety"><Reveal><p className="eyebrow">SAFETY & CONTROL</p><h2>AI làm việc trong giới hạn bạn đặt.</h2><p className="lead small">Mục tiêu không phải để AI thay bạn. Mục tiêu là để AI làm phần lặp lại, còn quyết định vẫn nằm trong tay bạn.</p></Reveal><div className="badges">{['Approval ON','Logs','Permissions','Backup','Local / Private'].map(x=><span key={x}>{x}</span>)}</div></section>
+
+      <section className="section"><Reveal><p className="eyebrow">PROOF</p><h2>Xây từ công việc thật, không phải demo sân khấu.</h2></Reveal><div className="proof-grid">{proof.map(x=><Reveal key={x}><span>{x}</span></Reveal>)}</div></section>
+
+      <section className="final section"><Reveal><h2>Muốn có một đội AI riêng cho công việc của bạn?</h2><p>Bắt đầu bằng một buổi audit nhỏ. Chỉ cần chọn một việc đang lặp lại và biến nó thành workflow đầu tiên.</p><a className="button" href="mailto:lienhe@haobi.io.vn?subject=Audit nho voi HaoBi">Tư vấn với HaoBi</a></Reveal></section>
+    </main>
+    <footer><span>© {new Date().getFullYear()} HaoBi</span><span>OpenClaw · Power BI · n8n</span><a href="mailto:lienhe@haobi.io.vn">lienhe@haobi.io.vn</a></footer>
+  </div>;
 }
 
 createRoot(document.getElementById('root')!).render(<StrictMode><App /></StrictMode>);
