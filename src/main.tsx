@@ -1,43 +1,120 @@
-import { StrictMode, useEffect, useState } from 'react';
+import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Button } from '@rtcamp/frappe-ui-react';
+import { motion, useReducedMotion } from 'motion/react';
 import './index.css';
 
-type Page = { number: string; slug: string; title: string; kicker: string; description: string; points: string[]; offer: string; proof?: string; steps?: string[]; fit?: string[]; };
+type Card = { n: string; title: string; body: string };
 
-const pricing = [
-  { name: 'START', price: 'Từ 2.000.000đ', description: 'Cài đặt và đưa một quy trình AI đầu tiên vào hoạt động.', items: ['Audit nhu cầu', 'Cài đặt OpenClaw hoặc agent', '1 workflow cơ bản', 'Bàn giao hướng dẫn'] },
-  { name: 'GROW', price: 'Từ 6.000.000đ', description: 'Xây một trợ lý AI gắn với dữ liệu và công việc thật.', items: ['Thiết kế workflow riêng', 'Kết nối Power BI, n8n, Sheets', 'Phân quyền và phê duyệt', '30 ngày hỗ trợ'] },
-  { name: 'SCALE', price: 'Liên hệ', description: 'Vận hành cả hệ thống AI cho doanh nghiệp.', items: ['Nhiều agent chuyên ngành', 'Managed AI và monitoring', 'Đào tạo đội ngũ', 'Bảo trì định kỳ'] },
+const cards: Card[] = [
+  { n: '01', title: 'AI Box', body: 'OpenClaw cài sẵn trên máy riêng. Cắm điện, kết nối, bắt đầu làm việc.' },
+  { n: '02', title: 'AI Employee', body: 'Một agent cho một vai trò thật: báo cáo, follow-up, nội dung, vận hành.' },
+  { n: '03', title: 'Automation', body: 'n8n, Sheets, Power BI, email và dữ liệu chạy thành workflow có kiểm soát.' },
+  { n: '04', title: 'Training', body: 'Workshop thực chiến để đội ngũ dùng AI như công cụ làm việc, không chỉ demo.' },
 ];
 
-const pages: Page[] = [
-  { number: '01', slug: 'setup', kicker: 'AI BOX · CÀI SẴN · THUÊ HOẶC MUA', title: 'Một AI workstation. Sẵn sàng làm việc.', description: 'Không cần tự cài OpenClaw, săn model hay xử lý lỗi cấu hình. Chọn một cách triển khai phù hợp: cài trên máy sẵn có, mua AI Box riêng, hoặc thuê theo tháng.', points: ['Install on Your Machine: cài OpenClaw trên máy user đang có', 'Buy Your AI Box: mini PC cài sẵn, cấu hình riêng cho từng user', 'Rent an AI Box: thuê thiết bị đã vận hành, cắm mạng là dùng', 'Thiết lập agent, skill, kênh giao tiếp, quyền hạn và backup'], offer: 'AI Box deployment', proof: 'User nhận được một hệ thống AI riêng, có đường hỗ trợ rõ ràng — không phải một file hướng dẫn rồi tự xoay xở.', steps: ['Chọn mô hình: máy hiện có, mua mini PC, hoặc thuê tháng', 'Cấu hình: model, API key, workspace, skill và kênh làm việc', 'Chạy thử: workflow đầu tiên với quyền tối thiểu và approval', 'Bàn giao: checklist sử dụng, backup, bảo hành và support'], fit: ['Cá nhân muốn có trợ lý AI riêng tại nhà hoặc văn phòng', 'SME muốn triển khai nhanh mà không có đội kỹ thuật', 'User cần dữ liệu và workflow tách riêng, không dùng chung hệ thống'] },
-  { number: '02', slug: 'ai-employee', kicker: 'AI EMPLOYEE', title: 'Một agent. Một việc thật.', description: 'Biến tác vụ lặp lại thành một nhân viên AI biết theo dõi, suy nghĩ và hành động trong giới hạn được giao.', points: ['Sales, HR, marketing, vận hành', 'Có quy trình phê duyệt trước khi hành động', 'Đo thời gian tiết kiệm và kết quả'], offer: 'AI employee' },
-  { number: '03', slug: 'training', kicker: 'ĐÀO TẠO · WORKSHOP · PLAYBOOK', title: 'Đội ngũ biết cách dùng AI.', description: 'Không dừng ở buổi demo. Đội ngũ có playbook, kỹ năng và workflow để tự vận hành sau khi bàn giao.', points: ['Workshop theo vai trò công việc', 'Template prompt, skill và workflow', 'Tư vấn 1:1 hoặc chương trình cho doanh nghiệp'], offer: 'Training & enablement' },
-  { number: '04', slug: 'managed', kicker: 'MANAGED AI', title: 'Không muốn vận hành? Để HaoBi lo.', description: 'HaoBi quản lý hạ tầng, token, backup, bảo mật và sức khỏe agent để Ba tập trung vào kết quả.', points: ['VPS, domain, model và chi phí token', 'Monitoring, backup và cập nhật', 'Bảo trì định kỳ, hỗ trợ theo tháng'], offer: 'Managed service' },
-  { number: '05', slug: 'vertical', kicker: 'AGENT CHUYÊN NGÀNH', title: 'AI hiểu ngành của Ba.', description: 'Không bán chatbot chung chung. HaoBi đóng gói agent cho dữ liệu, quy trình và ngôn ngữ riêng của từng ngành.', points: ['HR và báo cáo quản trị', 'Power BI, n8n và Google Sheets', 'Honda dealer, sales và chăm sóc khách hàng'], offer: 'Vertical agent' },
-  { number: '06', slug: 'one-person', kicker: 'ONE-PERSON COMPANY', title: 'Một người. Một đội AI.', description: 'Dùng AI như đòn bẩy vận hành: nghiên cứu, nội dung, lead, báo cáo và follow-up chạy thành hệ thống.', points: ['Từ ý tưởng đến quy trình tự chạy', 'Mỗi agent phụ trách một vai trò', 'Tăng sản lượng mà không phình đội ngũ'], offer: 'AI operating system' },
-  { number: '07', slug: 'install', kicker: 'AI BOX · MÁY CỦA USER', title: 'Cài trên máy user đang có.', description: 'Giữ nguyên phần cứng hiện tại. HaoBi biến máy của user thành một AI workstation có OpenClaw, agent và workflow sẵn sàng.', points: ['Không phải mua thêm thiết bị', 'Cài OpenClaw, model, skill và channel', 'Kiểm tra quyền, backup và khôi phục', 'Phù hợp để bắt đầu với chi phí thấp'], offer: 'Install on your machine', proof: 'Từ 1.500.000đ phí setup · API/model tính theo mức dùng', steps: ['Kiểm tra máy và nhu cầu', 'Cài đặt, cấu hình, kết nối', 'Chạy thử workflow đầu tiên', 'Bàn giao và hỗ trợ'] },
-  { number: '08', slug: 'buy-box', kicker: 'AI BOX · MUA ĐỨT', title: 'Sở hữu một AI Box riêng.', description: 'Nhận mini PC đã cài OpenClaw, cấu hình theo vai trò và sẵn sàng chạy tại nhà hoặc văn phòng.', points: ['AI Box Lite: N100/N150 · 16GB · 512GB', 'AI Box Pro: Ryzen 7 · 32GB · 1TB', 'User sở hữu thiết bị và dữ liệu', 'Có thể nâng cấp agent, skill và workflow'], offer: 'Buy your AI Box', proof: 'Lite dự kiến 7,9–10,9 triệu · Pro dự kiến 16,9–24,9 triệu', steps: ['Chọn cấu hình và vai trò agent', 'HaoBi cài đặt, burn-in, kiểm thử', 'Giao máy và bàn giao tài khoản', 'Bảo hành phần cứng + support phần mềm'] },
-  { number: '09', slug: 'rent-box', kicker: 'AI BOX · THUÊ THÁNG', title: 'Dùng trước. Mua sau.', description: 'Thuê một AI Box đã vận hành để thử OpenClaw trong công việc thật, không cần bỏ vốn mua máy ngay từ đầu.', points: ['Cắm mạng là dùng', 'HaoBi cập nhật và hỗ trợ từ xa', 'Thuê tối thiểu 12 tháng', 'Có thể mua lại hoặc nâng cấp sau thời gian thuê'], offer: 'Rent an AI Box', proof: 'Lite từ 699.000đ/tháng · Pro từ 1.990.000đ/tháng · API/model tính riêng', steps: ['Chọn Lite hoặc Pro', 'Nhận máy đã cấu hình', 'Đo hiệu quả trong công việc thật', 'Gia hạn, mua lại hoặc nâng cấp'] },
-];
+const services = ['Cài OpenClaw riêng', 'Thiết kế agent theo vai trò', 'Kết nối dữ liệu doanh nghiệp', 'Làm dashboard Power BI', 'Tự động hóa quy trình', 'Managed AI hằng tháng'];
 
-function currentSlug() { return window.location.hash.replace(/^#\/?/, '') || 'home'; }
+function FadeIn({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+  const reduce = useReducedMotion();
+  return (
+    <motion.div
+      initial={reduce ? { opacity: 0 } : { opacity: 0, y: 18 }}
+      whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.25 }}
+      transition={{ duration: 0.55, delay, ease: 'easeOut' }}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 function App() {
-  const [slug, setSlug] = useState(currentSlug());
-  const [boxTier, setBoxTier] = useState('lite');
-  const [mode, setMode] = useState('buy');
-  const [ram, setRam] = useState('16');
-  const [storage, setStorage] = useState('512');
-  useEffect(() => { const onHash = () => setSlug(currentSlug()); window.addEventListener('hashchange', onHash); return () => window.removeEventListener('hashchange', onHash); }, []);
-  const page = pages.find((item) => item.slug === slug);
-  return <div className="site-shell" id="top">
-    <header className="nav"><a className="brand" href="#home">Hao<span>Bi</span></a><nav aria-label="Điều hướng"><a href="#home">Trang chính</a><a href="#pricing">Giá</a><a href="mailto:lienhe@haobi.io.vn">Kết nối</a></nav></header>
-    {slug === 'pricing' ? <main className="pricing"><p className="eyebrow">MINH BẠCH · GỌN · THEO GIÁ TRỊ</p><h1>Giá để<br /><em>bắt đầu.</em></h1><p className="lead">Bắt đầu nhỏ. Đo kết quả. Mở rộng khi hệ thống thực sự tạo ra giá trị.</p><div className="pricing-grid">{pricing.map((plan) => <article className="price-card" key={plan.name}><span className="mono">{plan.name}</span><h2>{plan.price}</h2><p>{plan.description}</p><ul>{plan.items.map((item) => <li key={item}>{item}</li>)}</ul><a className="price-link" href="mailto:lienhe@haobi.io.vn?subject=Trao đổi gói HaoBi">Trao đổi gói này ↗</a></article>)}</div></main> : !page ? <main className="home"><p className="eyebrow">HAOBI · AI OPERATIONS FOR REAL WORK</p><h1>Ba AI.<br /><em>2 BI.</em></h1><p className="lead">A → B: từ AI đến BI, từ dữ liệu đến quyết định. HaoBi biến quy trình doanh nghiệp thành một đội ngũ AI làm việc thật.</p><Button className="button" variant="solid" theme="gray" size="lg" link="#setup">Khám phá 9 hướng <span>↗</span></Button><div className="page-grid">{pages.map((item) => <a className="page-card" href={`#${item.slug}`} key={item.slug}><span>{item.number}</span><strong>{item.title}</strong><small>{item.offer}</small></a>)}</div></main> : <main className="detail"><p className="eyebrow">{page.number} / 09 · {page.kicker}</p><h1>{page.title}</h1><p className="lead">{page.description}</p>{page.proof && <p className="proof">{page.proof}</p>}{(page.slug === 'buy-box' || page.slug === 'rent-box') && <section className="configurator" aria-label="Tùy chỉnh AI Box"><div><span className="mono">TÙY CHỈNH CẤU HÌNH</span><h2>Chọn chiếc máy phù hợp.</h2></div><label>Phiên bản<select value={boxTier} onChange={(e) => setBoxTier(e.target.value)}><option value="lite">Lite · N100/N150</option><option value="pro">Pro · Ryzen 7</option></select></label><label>RAM<select value={ram} onChange={(e) => setRam(e.target.value)}><option value="16">16GB</option><option value="32">32GB</option><option value="64">64GB</option></select></label><label>SSD<select value={storage} onChange={(e) => setStorage(e.target.value)}><option value="512">512GB</option><option value="1000">1TB</option><option value="2000">2TB</option></select></label><label>Mô hình<select value={mode} onChange={(e) => setMode(e.target.value)}><option value="buy">Mua đứt</option><option value="rent">Thuê tháng</option></select></label><output><span className="mono">ƯỚC TÍNH</span><strong>{mode === 'rent' ? (boxTier === 'pro' ? 'Từ 1.990.000đ/tháng' : 'Từ 699.000đ/tháng') : (boxTier === 'pro' ? 'Từ 16.900.000đ' : 'Từ 7.900.000đ')}</strong><small>{ram}GB RAM · {storage === '1000' ? '1TB' : `${storage}GB`} SSD · chưa gồm API/model</small></output></section>}<div className="detail-grid"><div><p className="eyebrow">HAOBI LÀM GÌ</p><ul>{page.points.map((point) => <li key={point}>{point}</li>)}</ul>{page.steps && <><p className="eyebrow section-label">QUY TRÌNH 4 BƯỚC</p><ol className="steps">{page.steps.map((step, index) => <li key={step}><span className="mono">0{index + 1}</span>{step}</li>)}</ol></>}{page.fit && <><p className="eyebrow section-label">PHÙ HỢP VỚI</p><ul>{page.fit.map((item) => <li key={item}>{item}</li>)}</ul></>}</div><aside><span className="mono">MÔ HÌNH</span><strong>{page.offer}</strong><p>Chọn mua đứt để sở hữu thiết bị, hoặc thuê tháng để thử trước. Mọi gói đều có cấu hình, bàn giao và support rõ ràng.</p><div className="choice-list"><span>01&nbsp; Máy user đang có</span><span>02&nbsp; Mua AI Box riêng</span><span>03&nbsp; Thuê AI Box tháng</span></div><Button className="button" variant="solid" theme="gray" size="lg" link="mailto:lienhe@haobi.io.vn?subject=Hỏi về HaoBi AI Box">Tư vấn AI Box <span>↗</span></Button></aside></div><nav className="pager" aria-label="Các hướng HaoBi">{pages.map((item) => <a className={item.slug === page.slug ? 'active' : ''} href={`#${item.slug}`} key={item.slug}>{item.number}</a>)}</nav></main>}
-    <footer><span>© {new Date().getFullYear()} HaoBi</span><span className="footer-note">AI → BI · Data · Automation</span><a href="mailto:lienhe@haobi.io.vn">lienhe@haobi.io.vn</a></footer>
-  </div>;
+  const reduce = useReducedMotion();
+  return (
+    <div className="shell">
+      <header className="nav">
+        <a className="brand" href="#top">HaoBi</a>
+        <nav aria-label="Điều hướng">
+          <a href="#services">Dịch vụ</a>
+          <a href="#process">Quy trình</a>
+          <a href="mailto:lienhe@haobi.io.vn">Liên hệ</a>
+        </nav>
+      </header>
+
+      <main id="top">
+        <section className="hero">
+          <div className="hero-copy">
+            <FadeIn><p className="eyebrow">AI → BI · DATA · AUTOMATION</p></FadeIn>
+            <FadeIn delay={0.08}>
+              <h1>Một người.<br /><span>Một đội AI.</span></h1>
+            </FadeIn>
+            <FadeIn delay={0.16}>
+              <p className="lead">HaoBi biến OpenClaw, Power BI và automation thành hệ thống AI riêng cho cá nhân và doanh nghiệp nhỏ.</p>
+            </FadeIn>
+            <FadeIn delay={0.24}>
+              <div className="actions">
+                <a className="button" href="mailto:lienhe@haobi.io.vn?subject=Triển khai HaoBi">Bắt đầu tư vấn</a>
+                <a className="ghost" href="#services">Xem dịch vụ</a>
+              </div>
+            </FadeIn>
+          </div>
+
+          <motion.div
+            className="orb-card"
+            initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.96, rotate: -2 }}
+            animate={reduce ? { opacity: 1 } : { opacity: 1, scale: 1, rotate: 0 }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+            aria-label="HaoBi operating system visual"
+          >
+            <div className="grid-glow" />
+            <motion.div className="orb" animate={reduce ? {} : { y: [0, -12, 0], rotate: [0, 3, 0] }} transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }} />
+            <div className="metric top"><span>Agents</span><strong>06</strong></div>
+            <div className="metric mid"><span>Workflows</span><strong>24/7</strong></div>
+            <div className="metric bot"><span>Human approval</span><strong>ON</strong></div>
+          </motion.div>
+        </section>
+
+        <section id="services" className="section">
+          <FadeIn><p className="eyebrow">WHAT HAOBI BUILDS</p></FadeIn>
+          <div className="card-grid">
+            {cards.map((card, i) => (
+              <FadeIn key={card.n} delay={i * 0.05}>
+                <motion.article className="card" whileHover={reduce ? {} : { y: -8 }} transition={{ type: 'spring', stiffness: 260, damping: 22 }}>
+                  <span>{card.n}</span>
+                  <h2>{card.title}</h2>
+                  <p>{card.body}</p>
+                </motion.article>
+              </FadeIn>
+            ))}
+          </div>
+        </section>
+
+        <section id="process" className="split section">
+          <FadeIn>
+            <div>
+              <p className="eyebrow">BORING PROCESS, REAL OUTCOME</p>
+              <h2 className="section-title">Không bán chatbot. Bán hệ thống làm việc.</h2>
+            </div>
+          </FadeIn>
+          <div className="service-list">
+            {services.map((item, i) => (
+              <FadeIn key={item} delay={i * 0.04}>
+                <motion.div className="service" whileHover={reduce ? {} : { x: 8 }}>
+                  <span>{String(i + 1).padStart(2, '0')}</span>{item}
+                </motion.div>
+              </FadeIn>
+            ))}
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <span>© {new Date().getFullYear()} HaoBi</span>
+        <span>OpenClaw · Power BI · n8n</span>
+        <a href="mailto:lienhe@haobi.io.vn">lienhe@haobi.io.vn</a>
+      </footer>
+    </div>
+  );
 }
 
 createRoot(document.getElementById('root')!).render(<StrictMode><App /></StrictMode>);
