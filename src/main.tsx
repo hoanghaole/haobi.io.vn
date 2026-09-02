@@ -1,4 +1,4 @@
-import { StrictMode, useState } from 'react';
+import { StrictMode, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { motion, useReducedMotion } from 'motion/react';
 import './index.css';
@@ -42,6 +42,19 @@ const packages = [
 ];
 
 const proof = ['OpenClaw agent workspace', 'Power BI narrative report', 'n8n workflow automation', 'Obsidian knowledge base', 'AI content workflow', 'Human approval flow'];
+const loop = ['OpenClaw', 'Power BI', 'n8n', 'AI Employee', 'Human Approval', 'Second Brain'];
+
+function Scramble({ text }: { text: string }) {
+  const reduce = useReducedMotion();
+  return <span className="scramble" aria-label={text}>{text.split('').map((c, i) => <motion.span aria-hidden="true" key={i} initial={{ opacity: 0, filter: 'blur(8px)' }} animate={{ opacity: 1, filter: 'blur(0)' }} transition={{ delay: reduce ? 0 : i * .018, duration: .28 }}>{c}</motion.span>)}</span>;
+}
+
+function Count({ to, suffix = '' }: { to: number; suffix?: string }) {
+  const reduce = useReducedMotion();
+  const [n, setN] = useState(reduce ? to : 0);
+  useEffect(() => { if (reduce) return; let f = 0; const id = setInterval(() => { f += 1; setN(Math.round(to * Math.min(f / 28, 1))); if (f >= 28) clearInterval(id); }, 28); return () => clearInterval(id); }, [to, reduce]);
+  return <>{n}{suffix}</>;
+}
 
 function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   const reduce = useReducedMotion();
@@ -56,12 +69,12 @@ function App() {
     <main id="top">
       <section className="hero section">
         <div>
-          <Reveal><p className="eyebrow">PRIVATE AI OPERATING SYSTEM</p></Reveal>
+          <Reveal><p className="eyebrow"><Scramble text="PRIVATE AI OPERATING SYSTEM" /></p></Reveal>
           <Reveal delay={.05}><h1>Một hệ thống AI riêng cho công việc thật.</h1></Reveal>
-          <Reveal delay={.1}><p className="lead">HaoBi giúp cá nhân và doanh nghiệp nhỏ triển khai OpenClaw, Power BI và automation thành một đội AI nhỏ: biết đọc dữ liệu, tạo báo cáo, theo dõi việc lặp lại và chờ bạn phê duyệt trước khi hành động.</p></Reveal>
+          <Reveal delay={.1}><p className="lead">HaoBi giúp cá nhân và doanh nghiệp nhỏ triển khai OpenClaw, Power BI và automation thành một đội AI nhỏ: biết đọc dữ liệu, tạo báo cáo, theo dõi việc lặp lại và chờ bạn phê duyệt trước khi hành động.</p></Reveal><Reveal delay={.14}><div className="stats"><strong><Count to={1} /></strong><span>workspace riêng</span><strong><Count to={5} /></strong><span>lớp workflow</span><strong><Count to={100} suffix="%" /></strong><span>human approval</span></div></Reveal>
           <Reveal delay={.15}><div className="actions"><a className="button" href="mailto:lienhe@haobi.io.vn?subject=Tu van trien khai HaoBi">Tư vấn triển khai</a><a className="link" href="#how">Xem cách hoạt động</a></div><p className="trust">Private by design · Human approval · Built for real workflows</p></Reveal>
         </div>
-        <Reveal delay={.12}><div className="map" aria-label="Workflow map"><div className="you">You</div>{['Data','Agent','Report','Approval','Automation'].map((x,i)=><motion.div key={x} className={`node n${i}`} whileHover={reduce ? {} : { y: -4 }}>{x}</motion.div>)}<svg viewBox="0 0 420 420"><path d="M210 210 L90 110 M210 210 L330 110 M210 210 L90 315 M210 210 L330 315 M210 210 L210 60"/></svg></div></Reveal>
+        <Reveal delay={.12}><div className="map" aria-label="Workflow map"><motion.div className="pulse" animate={reduce ? {} : { scale: [1, 1.08, 1], opacity: [.45, .75, .45] }} transition={{ duration: 3.2, repeat: Infinity }} /><div className="you">You</div>{['Data','Agent','Report','Approval','Automation'].map((x,i)=><motion.div key={x} className={`node n${i}`} whileHover={reduce ? {} : { y: -4 }}>{x}</motion.div>)}<svg viewBox="0 0 420 420"><path d="M210 210 L90 110 M210 210 L330 110 M210 210 L90 315 M210 210 L330 315 M210 210 L210 60"/></svg></div></Reveal>
       </section>
 
       <section className="section"><Reveal><p className="eyebrow">PAIN MIRROR</p><h2>Bạn không thiếu AI. Bạn thiếu một hệ thống làm việc được.</h2></Reveal><div className="grid four">{pains.map((p,i)=><Reveal key={p.title} delay={i*.04}><motion.article className="card glow" whileHover={reduce ? {} : { y: -6 }}><h3>{p.title}</h3><p>{p.body}</p><small>{p.fix}</small></motion.article></Reveal>)}</div></section>
@@ -70,9 +83,11 @@ function App() {
 
       <section className="section day"><Reveal><p className="eyebrow">DAY IN LIFE</p><h2>Một ngày làm việc với HaoBi</h2></Reveal><div className="timeline">{timeline.map(([time,title,body],i)=><Reveal key={time} delay={i*.04}><article><time>{time}</time><div><h3>{title}</h3><p>{body}</p><a href="mailto:lienhe@haobi.io.vn?subject=Toi muon workflow nay">Tôi muốn workflow này</a></div></article></Reveal>)}</div></section>
 
+      <section className="react-loop" aria-hidden="true"><div>{loop.concat(loop).map((x,i)=><span key={i}>{x}</span>)}</div></section>
+
       <section id="use-cases" className="section persona"><Reveal><p className="eyebrow">USE CASE SELECTOR</p><h2>Bạn muốn đội AI làm gì trước?</h2></Reveal><div className="tabs" role="tablist">{personas.map((p)=><button key={p.id} onClick={()=>setActive(p)} className={active.id===p.id?'on':''}>{p.label}{active.id===p.id&&<motion.span layoutId="tab"/>}</button>)}</div><motion.article key={active.id} className="persona-card" initial={{opacity:0,y:10}} animate={{opacity:1,y:0}}><p>{active.pain}</p><ul>{active.does.map(x=><li key={x}>{x}</li>)}</ul><a className="button" href={`mailto:lienhe@haobi.io.vn?subject=${encodeURIComponent(active.cta)}`}>{active.cta}</a></motion.article></section>
 
-      <section id="services" className="section"><Reveal><p className="eyebrow">SERVICES</p><h2>Bắt đầu nhỏ. Mở rộng khi có kết quả.</h2></Reveal><div className="grid three">{packages.map(([title,body,items],i)=><Reveal key={title} delay={i*.05}><article className="card package"><h3>{title}</h3><p>{body}</p><small>{items}</small><a href="mailto:lienhe@haobi.io.vn?subject=Hoi goi HaoBi">Trao đổi gói này</a></article></Reveal>)}</div></section>
+      <section id="services" className="section noise"><Reveal><p className="eyebrow">SERVICES</p><h2>Bắt đầu nhỏ. Mở rộng khi có kết quả.</h2></Reveal><div className="grid three">{packages.map(([title,body,items],i)=><Reveal key={title} delay={i*.05}><article className="card package"><h3>{title}</h3><p>{body}</p><small>{items}</small><a href="mailto:lienhe@haobi.io.vn?subject=Hoi goi HaoBi">Trao đổi gói này</a></article></Reveal>)}</div></section>
 
       <section className="section safety"><Reveal><p className="eyebrow">SAFETY & CONTROL</p><h2>AI làm việc trong giới hạn bạn đặt.</h2><p className="lead small">Mục tiêu không phải để AI thay bạn. Mục tiêu là để AI làm phần lặp lại, còn quyết định vẫn nằm trong tay bạn.</p></Reveal><div className="badges">{['Approval ON','Logs','Permissions','Backup','Local / Private'].map(x=><span key={x}>{x}</span>)}</div></section>
 
