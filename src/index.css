@@ -26,39 +26,6 @@ a { color: inherit; }
   z-index: 0;
 }
 
-.light-rays {
-  --mx: 0%;
-  --my: 0%;
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  background:
-    radial-gradient(circle at calc(50% + var(--mx)) calc(0% + var(--my)), color-mix(in srgb, var(--rays-color) 28%, transparent), transparent 36%),
-    #07100c;
-}
-
-.light-rays::before,
-.light-rays::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: -10%;
-  width: calc(115% * var(--spread));
-  height: calc(100% * var(--ray-length));
-  transform: translateX(calc(-50% + var(--mx))) translateY(var(--my)) skewX(calc(var(--distortion) * .2));
-  transform-origin: top center;
-  background: repeating-conic-gradient(from 192deg at 50% 0, transparent 0 8deg, color-mix(in srgb, var(--rays-color) 18%, transparent) 11deg 13deg, transparent 18deg 28deg);
-  filter: blur(calc(18px + var(--noise) * 34px));
-  opacity: .8;
-  animation: rays var(--rays-speed) ease-in-out infinite alternate;
-}
-
-.light-rays::after {
-  width: 85%;
-  opacity: .45;
-  animation-direction: alternate-reverse;
-}
-
 .maintenance {
   min-height: 100vh;
   width: min(720px, calc(100% - 40px));
@@ -106,11 +73,3 @@ p {
   text-decoration: none;
 }
 
-@keyframes rays {
-  to { rotate: 1.4deg; scale: 1.04; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .light-rays::before,
-  .light-rays::after { animation: none; }
-}
