@@ -40,7 +40,7 @@ function App() {
             <motion.i className="title-beam" initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }} transition={{ delay: 0.7, duration: 1 }} />
           </h1>
           <motion.p className="lead" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.75 }}>
-            HaoBi biến dữ liệu, dashboard và workflow rời rạc thành một hệ điều hành công việc: AI hỗ trợ đọc hiểu, BI giúp ra quyết định, Ba vẫn giữ quyền kiểm soát cuối cùng.
+            HaoBi biến dữ liệu, dashboard và workflow rời rạc thành một hệ điều hành công việc: AI hỗ trợ đọc hiểu, BI giúp ra quyết định, bạn vẫn giữ quyền kiểm soát cuối cùng.
           </motion.p>
           <motion.div className="actions" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1 }}>
             <a className="button" href="#how">Xem cách làm</a>
