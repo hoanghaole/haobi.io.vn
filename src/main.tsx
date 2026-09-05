@@ -1,25 +1,48 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import LightRays from './LightRays';
 import './index.css';
 
 const title = ['Từ', 'AI', 'đến', 'BI'];
 
+const packages = [
+  {
+    name: 'Starter',
+    purpose: 'Khởi động AI nội bộ gọn nhẹ',
+    copy: 'Một Mini PC đặt tại văn phòng để gom tri thức, quy trình và các câu hỏi lặp lại vào một điểm vận hành riêng của doanh nghiệp.',
+    points: ['OpenClaw cho trợ lý nội bộ', 'n8n cho workflow cơ bản', 'Dashboard theo dõi việc quan trọng'],
+  },
+  {
+    name: 'Ops',
+    purpose: 'Vận hành hằng ngày có kiểm soát',
+    copy: 'Biến dữ liệu, biểu mẫu, tin nhắn và báo cáo rời rạc thành luồng làm việc có người phê duyệt, có log, có màn hình điều hành.',
+    points: ['Workflow đa phòng ban', 'Bảng điều khiển theo vai trò', 'Quyền truy cập và dữ liệu do công ty giữ'],
+  },
+  {
+    name: 'Pro',
+    purpose: 'Hệ điều hành AI riêng cho doanh nghiệp',
+    copy: 'Thiết kế lớp AI Ops riêng: trợ lý, tự động hóa, BI và playbook vận hành chạy trên hạ tầng tại văn phòng, không bán phần cứng thuần túy.',
+    points: ['Kiến trúc OpenClaw + n8n + dashboard', 'Chuẩn hóa quy trình và tri thức', 'Mở rộng theo đội nhóm, dữ liệu, chính sách'],
+  },
+];
+
 function App() {
+  const reduceMotion = useReducedMotion();
+
   return (
     <>
       <div className="rays-background">
         <LightRays
           raysOrigin="top-center"
           raysColor="#00ffff"
-          raysSpeed={1.5}
+          raysSpeed={reduceMotion ? 0 : 1.5}
           lightSpread={0.8}
           rayLength={1.2}
-          followMouse={true}
-          mouseInfluence={0.1}
-          noiseAmount={0.1}
-          distortion={0.05}
+          followMouse={!reduceMotion}
+          mouseInfluence={reduceMotion ? 0 : 0.1}
+          noiseAmount={reduceMotion ? 0 : 0.1}
+          distortion={reduceMotion ? 0 : 0.05}
           className="custom-rays"
         />
       </div>
@@ -46,6 +69,31 @@ function App() {
             <a className="button" href="#how">Xem cách làm</a>
             <a className="button secondary" href="mailto:lienhe@haobi.io.vn?subject=Goi trao doi HaoBi">Gọi trao đổi</a>
           </motion.div>
+        </section>
+        <section className="ai-ops" id="how" aria-labelledby="ai-ops-title">
+          <div className="section-kicker">AI Ops Box / Mini PC tại văn phòng</div>
+          <div className="section-heading">
+            <h2 id="ai-ops-title">Một hộp AI riêng, đặt trong văn phòng, vận hành theo cách doanh nghiệp kiểm soát.</h2>
+            <p>
+              HaoBi không bán Mini PC như một món phần cứng. Chúng tôi đóng gói một hệ điều hành công việc riêng: OpenClaw cho đội trợ lý AI, n8n cho tự động hóa, dashboard cho quản trị. Dữ liệu, workflow và quyền quyết định vẫn nằm trong tay doanh nghiệp.
+            </p>
+          </div>
+          <div className="package-grid" aria-label="Gói AI Ops Box">
+            {packages.map((item) => (
+              <article className="package-card" key={item.name}>
+                <div>
+                  <p className="package-name">{item.name}</p>
+                  <h3>{item.purpose}</h3>
+                  <p>{item.copy}</p>
+                </div>
+                <ul>
+                  {item.points.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
         </section>
       </main>
     </>
