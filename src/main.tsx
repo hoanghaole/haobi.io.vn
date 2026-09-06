@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { motion, useReducedMotion } from 'motion/react';
-import LightRays from './LightRays';
+import GalaxyField from './GalaxyField';
 import './index.css';
 
 const title = ['Từ', 'AI', 'đến', 'BI'];
@@ -28,23 +28,12 @@ const packages = [
 ];
 
 function App() {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = Boolean(useReducedMotion());
 
   return (
     <>
       <div className="rays-background">
-        <LightRays
-          raysOrigin="top-center"
-          raysColor="#00ffff"
-          raysSpeed={reduceMotion ? 0 : 1.5}
-          lightSpread={0.8}
-          rayLength={1.2}
-          followMouse={!reduceMotion}
-          mouseInfluence={reduceMotion ? 0 : 0.1}
-          noiseAmount={reduceMotion ? 0 : 0.1}
-          distortion={reduceMotion ? 0 : 0.05}
-          className="custom-rays"
-        />
+        <GalaxyField reducedMotion={reduceMotion} />
       </div>
       <main className="home" aria-labelledby="title">
         <section className="hero">
